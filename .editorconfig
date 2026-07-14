@@ -1,0 +1,412 @@
+###############################################################################
+# MNotes - EditorConfig
+#
+# Two layers:
+#   1) Formatting  -> IDE-agnostic (editorconfig.org standard)
+#   2) Code style  -> Roslyn analyzers (.NET-specific, IDExxxx rules)
+#
+# For layer 2 to take effect during `dotnet build` (not only inside the IDE),
+# the .csproj or Directory.Build.props must set:
+#   <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+#
+# Severity convention in this project:
+#   error      -> genuine correctness problems only
+#   warning    -> conventions that should be followed (non-blocking)
+#   suggestion -> style questions with legitimate exceptions
+###############################################################################
+
+root = true
+
+# ============================================================================
+# LAYER 1: Formatting (all files)
+# ============================================================================
+[*]
+charset = utf-8
+end_of_line = crlf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{xml,csproj,props,targets,config,json,yml,yaml}]
+indent_size = 2
+
+[*.md]
+# In Markdown, two trailing spaces mean a line break -> do not trim
+trim_trailing_whitespace = false
+
+# ============================================================================
+# LAYER 2: C# rules
+# ============================================================================
+[*.cs]
+
+#----------------------------------------------------------------------------
+# Namespace must match folder structure
+# Guards against leftovers from renames: a file in MNoteProvider.Domain/
+# declaring namespace MNotes.Domain would otherwise go unnoticed.
+#----------------------------------------------------------------------------
+dotnet_style_namespace_match_folder = true:error
+
+#----------------------------------------------------------------------------
+# using directives
+#----------------------------------------------------------------------------
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
+csharp_using_directive_placement = outside_namespace:warning
+
+# File-scoped namespaces (C# 10+) -> saves one level of indentation
+csharp_style_namespace_declarations = file_scoped:warning
+
+# Unused usings (IDE0005)
+# Deliberately "silent": no build warning, but the IDE still greys them out.
+# NOTE: requires <GenerateDocumentationFile>true</GenerateDocumentationFile>,
+#       otherwise this rule is silently ignored during build.
+dotnet_diagnostic.IDE0005.severity = silent
+
+#----------------------------------------------------------------------------
+# this. -> do not use
+#----------------------------------------------------------------------------
+dotnet_style_qualification_for_field = false:warning
+dotnet_style_qualification_for_property = false:warning
+dotnet_style_qualification_for_method = false:warning
+dotnet_style_qualification_for_event = false:warning
+
+#----------------------------------------------------------------------------
+# Language keywords instead of BCL type names (int, not Int32)
+#----------------------------------------------------------------------------
+dotnet_style_predefined_type_for_locals_parameters_members = true:warning
+dotnet_style_predefined_type_for_member_access = true:warning
+
+#----------------------------------------------------------------------------
+# var
+# Deliberately only "suggestion": in reviews without an IDE (GitHub, PDF) the
+# explicit type helps. The rule guides, it does not block.
+#----------------------------------------------------------------------------
+csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_elsewhere = true:suggestion
+
+#----------------------------------------------------------------------------
+# Expression-bodied members
+#----------------------------------------------------------------------------
+csharp_style_expression_bodied_methods = when_on_single_line:suggestion
+csharp_style_expression_bodied_constructors = false:suggestion
+csharp_style_expression_bodied_properties = true:suggestion
+csharp_style_expression_bodied_accessors = true:suggestion
+csharp_style_expression_bodied_lambdas = true:suggestion
+csharp_style_expression_bodied_local_functions = when_on_single_line:suggestion
+
+#----------------------------------------------------------------------------
+# Pattern matching & modern C# features
+#----------------------------------------------------------------------------
+csharp_style_pattern_matching_over_is_with_cast_check = true:warning
+csharp_style_pattern_matching_over_as_with_null_check = true:warning
+csharp_style_prefer_switch_expression = true:suggestion
+csharp_style_prefer_pattern_matching = true:suggestion
+csharp_style_prefer_not_pattern = true:warning
+csharp_style_inlined_variable_declaration = true:suggestion
+
+#----------------------------------------------------------------------------
+# Null checking
+#----------------------------------------------------------------------------
+csharp_style_throw_expression = true:suggestion
+csharp_style_conditional_delegate_call = true:warning
+dotnet_style_coalesce_expression = true:warning
+dotnet_style_null_propagation = true:warning
+
+#----------------------------------------------------------------------------
+# Immutability
+# Matches the project decision: records with init properties at serialisation
+# boundaries (DTOs, events).
+#----------------------------------------------------------------------------
+dotnet_style_readonly_field = true:warning
+csharp_prefer_static_local_function = true:suggestion
+csharp_style_prefer_readonly_struct = true:suggestion
+
+#----------------------------------------------------------------------------
+# Unused code
+# Principle: "Dead code is not neutral."
+#----------------------------------------------------------------------------
+dotnet_code_quality_unused_parameters = all:warning
+csharp_style_unused_value_expression_statement_preference = discard_variable:suggestion
+csharp_style_unused_value_assignment_preference = discard_variable:warning
+
+# Unused local variables: greyed out in the IDE, no build warning.
+dotnet_diagnostic.CS0168.severity = silent
+dotnet_diagnostic.CS0219.severity = silent
+
+# Unused private field / unused private method
+dotnet_diagnostic.IDE0051.severity = warning
+dotnet_diagnostic.IDE0052.severity = warning
+
+#----------------------------------------------------------------------------
+# Accessibility modifiers must be explicit
+#----------------------------------------------------------------------------
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
+
+# IDE0290: use primary constructor -> off, does not fit the explicit style here
+dotnet_diagnostic.IDE0290.severity = none
+
+#----------------------------------------------------------------------------
+# Formatting: indentation
+#----------------------------------------------------------------------------
+csharp_indent_case_contents = true
+csharp_indent_switch_labels = true
+csharp_indent_labels = one_less_than_current
+csharp_indent_block_contents = true
+csharp_indent_braces = false
+csharp_indent_case_contents_when_block = false
+
+#----------------------------------------------------------------------------
+# Formatting: new lines (Allman style / .NET standard)
+#----------------------------------------------------------------------------
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true
+csharp_new_line_between_query_expression_clauses = true
+
+#----------------------------------------------------------------------------
+# Formatting: whitespace
+#----------------------------------------------------------------------------
+csharp_space_after_cast = false
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+csharp_space_between_method_call_parameter_list_parentheses = false
+csharp_space_between_parentheses = false
+csharp_space_before_colon_in_inheritance_clause = true
+csharp_space_after_colon_in_inheritance_clause = true
+csharp_space_around_binary_operators = before_and_after
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
+csharp_space_between_method_call_name_and_opening_parenthesis = false
+csharp_space_between_method_call_empty_parameter_list_parentheses = false
+
+#----------------------------------------------------------------------------
+# Formatting: line breaks
+#----------------------------------------------------------------------------
+csharp_preserve_single_line_statements = false
+csharp_preserve_single_line_blocks = true
+
+
+###############################################################################
+# NAMING RULES
+#
+# Structure (three parts, wired together via freely chosen identifiers):
+#   1) dotnet_naming_symbols.<name>   -> WHAT is meant?
+#   2) dotnet_naming_style.<name>     -> HOW should it look?
+#   3) dotnet_naming_rule.<name>      -> links 1 + 2 + severity
+#
+# Order matters: the FIRST matching rule wins.
+# Therefore the specific rules (const, static readonly) come BEFORE the
+# general rule for private fields.
+###############################################################################
+
+# ---------------------------------------------------------------------------
+# Styles (reusable building blocks)
+# ---------------------------------------------------------------------------
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+
+dotnet_naming_style.camel_case.capitalization = camel_case
+
+dotnet_naming_style.underscore_camel_case.capitalization = camel_case
+dotnet_naming_style.underscore_camel_case.required_prefix = _
+
+dotnet_naming_style.interface_style.capitalization = pascal_case
+dotnet_naming_style.interface_style.required_prefix = I
+
+dotnet_naming_style.type_parameter_style.capitalization = pascal_case
+dotnet_naming_style.type_parameter_style.required_prefix = T
+
+dotnet_naming_style.async_suffix_style.capitalization = pascal_case
+dotnet_naming_style.async_suffix_style.required_suffix = Async
+
+# ---------------------------------------------------------------------------
+# Rule 1: interfaces start with I
+# ---------------------------------------------------------------------------
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+dotnet_naming_symbols.interfaces.applicable_accessibilities = *
+
+dotnet_naming_rule.interfaces_start_with_i.symbols = interfaces
+dotnet_naming_rule.interfaces_start_with_i.style = interface_style
+dotnet_naming_rule.interfaces_start_with_i.severity = warning
+
+# ---------------------------------------------------------------------------
+# Rule 2: type parameters start with T
+# ---------------------------------------------------------------------------
+dotnet_naming_symbols.type_parameters.applicable_kinds = type_parameter
+
+dotnet_naming_rule.type_parameters_start_with_t.symbols = type_parameters
+dotnet_naming_rule.type_parameters_start_with_t.style = type_parameter_style
+dotnet_naming_rule.type_parameters_start_with_t.severity = warning
+
+# ---------------------------------------------------------------------------
+# Rule 3: async methods may end in "Async"
+# The suffix follows the TAP convention, but is optional in this project.
+# ---------------------------------------------------------------------------
+dotnet_naming_symbols.async_methods.applicable_kinds = method
+dotnet_naming_symbols.async_methods.applicable_accessibilities = *
+dotnet_naming_symbols.async_methods.required_modifiers = async
+
+dotnet_naming_rule.async_methods_end_in_async.symbols = async_methods
+dotnet_naming_rule.async_methods_end_in_async.style = async_suffix_style
+dotnet_naming_rule.async_methods_end_in_async.severity = suggestion
+
+# ---------------------------------------------------------------------------
+# Rule 4: constants = PascalCase
+# IMPORTANT: must come BEFORE the private field rule, otherwise a private const
+#            would wrongly be required to carry an underscore.
+# ---------------------------------------------------------------------------
+dotnet_naming_symbols.constants.applicable_kinds = field, local
+dotnet_naming_symbols.constants.applicable_accessibilities = *
+dotnet_naming_symbols.constants.required_modifiers = const
+
+dotnet_naming_rule.constants_are_pascal_case.symbols = constants
+dotnet_naming_rule.constants_are_pascal_case.style = pascal_case
+dotnet_naming_rule.constants_are_pascal_case.severity = warning
+
+# ---------------------------------------------------------------------------
+# Rule 5: non-private static readonly fields = PascalCase
+# Restricted to non-private accessibilities on purpose: private static readonly
+# fields (e.g. BaseRepository._props) fall through to rule 6 and keep the
+# leading underscore.
+# ---------------------------------------------------------------------------
+dotnet_naming_symbols.static_readonly_fields.applicable_kinds = field
+dotnet_naming_symbols.static_readonly_fields.applicable_accessibilities = public, internal, protected, protected_internal
+dotnet_naming_symbols.static_readonly_fields.required_modifiers = static, readonly
+
+dotnet_naming_rule.static_readonly_fields_are_pascal_case.symbols = static_readonly_fields
+dotnet_naming_rule.static_readonly_fields_are_pascal_case.style = pascal_case
+dotnet_naming_rule.static_readonly_fields_are_pascal_case.severity = warning
+
+# ---------------------------------------------------------------------------
+# Rule 6: PRIVATE FIELDS -> _camelCase
+# -> e.g. private readonly ILogger<NoteProvider> _logger;
+# ---------------------------------------------------------------------------
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private, private_protected
+
+dotnet_naming_rule.private_fields_with_underscore.symbols = private_fields
+dotnet_naming_rule.private_fields_with_underscore.style = underscore_camel_case
+dotnet_naming_rule.private_fields_with_underscore.severity = warning
+
+# ---------------------------------------------------------------------------
+# Rule 7: non-private members = PascalCase
+# ---------------------------------------------------------------------------
+dotnet_naming_symbols.public_members.applicable_kinds = property, method, field, event, delegate
+dotnet_naming_symbols.public_members.applicable_accessibilities = public, internal, protected, protected_internal
+
+dotnet_naming_rule.public_members_are_pascal_case.symbols = public_members
+dotnet_naming_rule.public_members_are_pascal_case.style = pascal_case
+dotnet_naming_rule.public_members_are_pascal_case.severity = warning
+
+# ---------------------------------------------------------------------------
+# Rule 8: types = PascalCase
+# ---------------------------------------------------------------------------
+dotnet_naming_symbols.types.applicable_kinds = class, struct, enum, delegate
+dotnet_naming_symbols.types.applicable_accessibilities = *
+
+dotnet_naming_rule.types_are_pascal_case.symbols = types
+dotnet_naming_rule.types_are_pascal_case.style = pascal_case
+dotnet_naming_rule.types_are_pascal_case.severity = warning
+
+# ---------------------------------------------------------------------------
+# Rule 9: parameters and locals = camelCase
+# ---------------------------------------------------------------------------
+dotnet_naming_symbols.parameters_and_locals.applicable_kinds = parameter, local
+
+dotnet_naming_rule.parameters_and_locals_are_camel_case.symbols = parameters_and_locals
+dotnet_naming_rule.parameters_and_locals_are_camel_case.style = camel_case
+dotnet_naming_rule.parameters_and_locals_are_camel_case.severity = warning
+
+
+###############################################################################
+# TARGETED ANALYZER RULES
+# Deliberately selected CA rules that match known concerns in this project.
+###############################################################################
+
+# --- Logging ---------------------------------------------------------------
+# CA2254: log template must be static (no interpolated string), otherwise
+#         structured logging is lost.
+#         WRONG:   _logger.LogError($"Note {id} not found")
+#         CORRECT: _logger.LogError("Note {NoteId} not found", id)
+dotnet_diagnostic.CA2254.severity = warning
+
+# --- Async -----------------------------------------------------------------
+# CA2007: ConfigureAwait(false) -> not required in ASP.NET Core
+#         (no SynchronizationContext). Deliberately off.
+dotnet_diagnostic.CA2007.severity = none
+
+# CA1849: synchronous call inside an async method (.Result / .Wait())
+#         -> risk of deadlock. Take seriously.
+dotnet_diagnostic.CA1849.severity = warning
+
+# CA2016: forward the CancellationToken.
+dotnet_diagnostic.CA2016.severity = warning
+
+# --- Exceptions ------------------------------------------------------------
+# CA2200: `throw ex;` destroys the stack trace -> use `throw;`
+dotnet_diagnostic.CA2200.severity = warning
+
+# CA1031: no `catch (Exception)`.
+#         Deliberately OFF: in this project the provider catches broadly on
+#         purpose, to translate into OneOf / MNoteProcessFail. That is the
+#         application's error boundary, not an antipattern.
+dotnet_diagnostic.CA1031.severity = none
+
+# --- Disposal --------------------------------------------------------------
+# CA2213: disposable field not disposed.
+#         Relevant for NoteHubCon (HubConnection is IAsyncDisposable).
+dotnet_diagnostic.CA2213.severity = warning
+
+# CA1816: call GC.SuppressFinalize in Dispose.
+dotnet_diagnostic.CA1816.severity = warning
+
+# --- Nullable --------------------------------------------------------------
+# CS8618: non-nullable field not initialised.
+#         Important because Dapper maps onto concrete classes.
+dotnet_diagnostic.CS8618.severity = warning
+dotnet_diagnostic.CS8602.severity = warning
+dotnet_diagnostic.CS8603.severity = warning
+
+# --- Security --------------------------------------------------------------
+# CA2100: SQL injection risk (string concatenation in SQL).
+#         Never an issue with Dapper parameters -- but this rule is the safety
+#         net should anyone ever build a query with $"...".
+dotnet_diagnostic.CA2100.severity = error
+
+# --- Performance -----------------------------------------------------------
+# CA1822: member can be static.
+dotnet_diagnostic.CA1822.severity = suggestion
+
+# CA1848: LoggerMessage delegates instead of LogInformation().
+#         Pure micro-optimisation -> off, would only create noise.
+dotnet_diagnostic.CA1848.severity = none
+
+
+###############################################################################
+# EXCEPTIONS
+###############################################################################
+
+# --- Generated code --------------------------------------------------------
+[*.{Designer.cs,generated.cs,g.cs,g.i.cs}]
+generated_code = true
+
+# --- Razor / Blazor --------------------------------------------------------
+[*.razor]
+indent_size = 4
+
+# --- Tests -----------------------------------------------------------------
+# Test method names need underscores:
+#   GetNoteAsync_WhenNoteDoesNotExist_ReturnsProcessFail
+# Therefore relax the PascalCase rule for methods here.
+[**/*Tests/**/*.cs]
+dotnet_naming_rule.public_members_are_pascal_case.severity = none
+dotnet_naming_rule.async_methods_end_in_async.severity = none
+
+# Enum members deliberately use UPPER_CASE names in this project.
+[**/Enums/*.cs]
+dotnet_naming_rule.constants_are_pascal_case.severity = none
+dotnet_naming_rule.public_members_are_pascal_case.severity = none
