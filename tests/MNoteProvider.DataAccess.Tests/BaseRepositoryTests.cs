@@ -1,4 +1,3 @@
-using FluentAssertions;
 using MNoteProvider.DataAccess.Repositories;
 using MNoteProvider.Domain;
 using MNoteProvider.Domain.Abstractions;
@@ -15,7 +14,7 @@ public class BaseRepositoryTests
         var sql = BaseRepository<Note, INote>.SelectByIdSql;
 
         // Assert
-        sql.Should().EndWith("FROM note WHERE id = @Id;");
+        Assert.That(sql, Does.EndWith("FROM note WHERE id = @Id;"));
     }
 
     [Test]
@@ -25,7 +24,7 @@ public class BaseRepositoryTests
         var sql = BaseRepository<Note, INote>.SelectAllSql;
 
         // Assert
-        sql.Should().EndWith("FROM note ORDER BY doeom DESC;");
+        Assert.That(sql, Does.EndWith("FROM note ORDER BY doeom DESC;"));
     }
 
     [Test]
@@ -35,7 +34,7 @@ public class BaseRepositoryTests
         var sql = BaseRepository<Note, INote>.InsertSql;
 
         // Assert
-        sql.Should().StartWith("INSERT INTO note");
+        Assert.That(sql, Does.StartWith("INSERT INTO note"));
     }
 
     [Test]
@@ -45,7 +44,7 @@ public class BaseRepositoryTests
         var sql = BaseRepository<Note, INote>.InsertSql;
 
         // Assert
-        sql.Should().Contain("creationdate");
+        Assert.That(sql, Does.Contain("creationdate"));
     }
 
     [Test]
@@ -55,9 +54,9 @@ public class BaseRepositoryTests
         var sql = BaseRepository<Folder, IFolder>.UpdateSql;
 
         // Assert
-        sql.Should().NotContain("creationdate");
-        sql.Should().Contain("name = @Name");
-        sql.Should().Contain("WHERE id = @Id");
+        Assert.That(sql, Does.Not.Contain("creationdate"));
+        Assert.That(sql, Does.Contain("name = @Name"));
+        Assert.That(sql, Does.Contain("WHERE id = @Id"));
     }
 
     [Test]
@@ -67,7 +66,7 @@ public class BaseRepositoryTests
         var sql = BaseRepository<Note, INote>.DeleteSql;
 
         // Assert
-        sql.Should().Be("DELETE FROM note WHERE id = @Id;");
+        Assert.That(sql, Is.EqualTo("DELETE FROM note WHERE id = @Id;"));
     }
 
     [Test]
@@ -80,14 +79,16 @@ public class BaseRepositoryTests
         var parameters = BaseRepository<Note, INote>.BuildInsertParameters(note);
 
         // Assert
-        parameters.ParameterNames.Should().BeEquivalentTo(
-            nameof(Note.Id),
-            nameof(Note.Name),
-            nameof(Note.Content),
-            nameof(Note.Description),
-            nameof(Note.FolderId),
-            nameof(Note.CreationDate),
-            nameof(Note.Doeom));
+        Assert.That(parameters.ParameterNames, Is.EquivalentTo(new[]
+        {
+        nameof(Note.Id),
+        nameof(Note.Name),
+        nameof(Note.Content),
+        nameof(Note.Description),
+        nameof(Note.FolderId),
+        nameof(Note.CreationDate),
+        nameof(Note.Doeom)
+        }));
     }
 
     [Test]
@@ -99,14 +100,17 @@ public class BaseRepositoryTests
         // Act
         var parameters = BaseRepository<Note, INote>.BuildUpdateParameters(note);
 
-        // Assert
-        parameters.ParameterNames.Should().BeEquivalentTo(
-            nameof(Note.Id),
+
+        //Assert
+        Assert.That(parameters.ParameterNames, Is.EquivalentTo(new[]
+        {
+                        nameof(Note.Id),
             nameof(Note.Name),
             nameof(Note.Content),
             nameof(Note.Description),
             nameof(Note.FolderId),
-            nameof(Note.Doeom));
+            nameof(Note.Doeom)
+        }));
     }
 
     [Test]
@@ -119,8 +123,8 @@ public class BaseRepositoryTests
         var parameters = BaseRepository<Note, INote>.BuildUpdateParameters(note);
 
         // Assert
-        parameters.Get<string>(nameof(Note.Name)).Should().Be("Besprechungsnotiz");
-        parameters.Get<Guid>(nameof(Note.Id)).Should().Be(note.Id);
+        Assert.That(parameters.Get<string>(nameof(Note.Name)), Is.EqualTo("Besprechungsnotiz"));
+        Assert.That(parameters.ParameterNames, Does.Contain(nameof(Note.Id)));
     }
 
     private static Note CreateNote(

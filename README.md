@@ -71,7 +71,7 @@ Design decisions worth noting:
 | [OneOf](https://github.com/mcintyre321/OneOf) | all layers | Discriminated unions for explicit success/failure results |
 | ASP.NET Core SignalR (+ client) | Host, ClientService | Real-time note change notifications |
 | `Microsoft.Extensions.*` | Common, DataAccess, ClientService | Configuration, DI, and HTTP client factory abstractions |
-| NUnit, FluentAssertions, coverlet | tests | Test framework, assertions, coverage |
+| NUnit, coverlet | tests | Test framework, assertions, and coverage |
 
 No further runtime dependencies—the goal is a small, fully explainable dependency graph.
 

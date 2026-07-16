@@ -1,4 +1,3 @@
-using FluentAssertions;
 using MNoteProvider.DataAccess.Repositories;
 
 namespace MNoteProvider.DataAccess.Tests;
@@ -14,7 +13,7 @@ public class NoteTagAssignmentRepositoryTests
         var sql = NoteTagAssignmentRepository.DeleteAssignmentSql;
 
         //Assert
-        sql.Should().Be("DELETE FROM notetagassignment WHERE noteid = @NoteId AND tagid = @TagId;");
+        Assert.That(sql, Is.EqualTo("DELETE FROM notetagassignment WHERE noteid = @NoteId AND tagid = @TagId;"));
     }
 
 

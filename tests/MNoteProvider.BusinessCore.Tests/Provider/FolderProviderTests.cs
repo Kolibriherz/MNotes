@@ -1,4 +1,3 @@
-using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using MNoteProvider.BusinessCore.Provider;
 using MNoteProvider.Common.Abstractions.Enums;
@@ -14,7 +13,7 @@ namespace MNoteProvider.BusinessCore.Tests.Provider;
 public class FolderProviderTests
 {
     [Test]
-    public async Task UpdateFolder_WhenMovedBelowItself_ReturnsConflict()
+    public async Task UpdateFolder_WhenMovedBelowItself_ReturnsConflictAndDoesNotUpdate()
     {
         // Arrange
         var folderId = Guid.NewGuid();
@@ -36,11 +35,11 @@ public class FolderProviderTests
         var result = await provider.UpdateFolder(dto);
 
         // Assert
-        result.IsT1.Should().BeTrue();
-        result.AsT1.FailType.Should().Be(MNotesFailType.CONFLICT);
-        result.AsT1.Message.Should().Be(ErrorMessages.FolderMoveWouldCreateCycle(folderId, folderId));
+        Assert.That(result.IsT1, Is.True);
+        Assert.That(result.AsT1.FailType, Is.EqualTo(MNotesFailType.CONFLICT));
+        Assert.That(result.AsT1.Message, Is.EqualTo(ErrorMessages.FolderMoveWouldCreateCycle(folderId, folderId)));
 
-        repository.UpdateCallCount.Should().Be(0);
+        Assert.That(repository.UpdateCallCount, Is.EqualTo(0));
     }
 
     [Test]
@@ -71,16 +70,14 @@ public class FolderProviderTests
         var result = await provider.UpdateFolder(dto);
 
         // Assert
-        result.IsT1.Should().BeTrue();
-        result.AsT1.FailType.Should().Be(MNotesFailType.CONFLICT);
-        result.AsT1.Message.Should().Be(ErrorMessages.FolderMoveWouldCreateCycle(parentId,grandchildId));
+        Assert.That(result.IsT1, Is.True);
+        Assert.That(result.AsT1.FailType, Is.EqualTo(MNotesFailType.CONFLICT));
+        Assert.That(result.AsT1.Message, Is.EqualTo(ErrorMessages.FolderMoveWouldCreateCycle(parentId, grandchildId)));
 
-        repository.UpdateCallCount.Should().Be(0);
+        Assert.That(repository.UpdateCallCount, Is.EqualTo(0));
     }
 
-    private static Folder CreateFolder(
-        Guid id,
-        Guid parentId,string name) =>new()
+    private static Folder CreateFolder(Guid id, Guid parentId,string name) =>new()
         {
             Id = id,
             ParentId = parentId,

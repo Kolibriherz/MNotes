@@ -1,4 +1,3 @@
-using FluentAssertions;
 using MNoteProvider.DataAccess.Repositories;
 
 namespace MNoteProvider.DataAccess.Tests;
@@ -13,6 +12,6 @@ public class CommentRepositoryTests
         var sql = CommentRepository.SelectAllByNoteIdSql;
 
         //Assert
-        sql.Should().Be("SELECT * FROM comment WHERE noteid = @NoteId;");
+        Assert.That(sql, Is.EqualTo("SELECT * FROM comment WHERE noteid = @NoteId;"));
     }
 }

@@ -1,4 +1,3 @@
-using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using MNoteProvider.Common;
 
@@ -19,8 +18,8 @@ public class ResultExtensionTests
         var result = fail.ToIResult();
         var resultWithStatusCode = (IStatusCodeHttpResult)result;
 
-        //Assert
-        resultWithStatusCode.StatusCode.Should().Be(400);
+        // Assert
+        Assert.That(resultWithStatusCode.StatusCode, Is.EqualTo(400));
 
     }
 
@@ -34,8 +33,8 @@ public class ResultExtensionTests
         var result = fail.ToIResult();
         var resultWithStatusCode = (IStatusCodeHttpResult)result;
 
-        //Assert
-        resultWithStatusCode.StatusCode.Should().Be(404);
+        // Assert
+        Assert.That(resultWithStatusCode.StatusCode, Is.EqualTo(404));
 
     }
 
@@ -50,8 +49,8 @@ public class ResultExtensionTests
         var result = fail.ToIResult();
         var resultWithStatusCode = (IStatusCodeHttpResult)result;
 
-        //Assert
-        resultWithStatusCode.StatusCode.Should().Be(500);
+        // Assert
+        Assert.That(resultWithStatusCode.StatusCode, Is.EqualTo(500));
 
     }
 }
