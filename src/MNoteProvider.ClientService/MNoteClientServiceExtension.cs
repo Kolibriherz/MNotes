@@ -13,6 +13,10 @@ public static class MNoteClientServiceExtension
     /// <returns>The service collection with the MNote client services registered.</returns>
     public static IServiceCollection AddMNoteClientService(this IServiceCollection services, Uri baseUri)
     {
+        if (!baseUri.ToString().EndsWith("/"))
+            baseUri = new Uri(baseUri.ToString() + "/");
+        
+
         var hubAddress = new Uri(baseUri, MNotesRoutes.Hubs.Name);   
         services.AddSingleton(new NoteHubConOptions { HubAddress = hubAddress });
         services.AddSingleton<NoteHubCon>();

@@ -4,11 +4,11 @@ namespace MNoteProvider.Common;
 /// </summary>
 public static class MNotesRoutes
 {
-    private const string Note = "/note";
-    private const string Folder = "/folder";
-    private const string Comment = "/comment";
-    private const string Tag = "/tag";
-    private const string NoteTagAssignment = "/notetagassignment";
+    private const string Note = "note";
+    private const string Folder = "folder";
+    private const string Comment = "comment";
+    private const string Tag = "tag";
+    private const string NoteTagAssignment = "notetagassignment";
 
     /// <summary>
     /// HTTP endpoint routes.
@@ -51,7 +51,7 @@ public static class MNotesRoutes
         public static class CommentEndpoints
         {
             /// <summary>Route for getting all comments of a note.</summary>
-            public const string GetAllByNote = $"{Comment}/getall";
+            public const string GetAllByNote = $"{Comment}/getallbynote";
             /// <summary>Route for creating a comment.</summary>
             public const string Create = $"{Comment}/create";
             /// <summary>Route for updating a comment.</summary>
@@ -87,7 +87,7 @@ public static class MNotesRoutes
     public static class Hubs
     {
         /// <summary>Base route of the SignalR hubs.</summary>
-        public const string Name = "/hubs";
+        public const string Name = "hubs";
         /// <summary>Names of the hub methods pushed to connected clients.</summary>
         public static class MethodNames
         {
