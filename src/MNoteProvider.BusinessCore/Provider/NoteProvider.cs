@@ -117,7 +117,7 @@ public class NoteProvider : INoteProvider
             return new MNoteProcessFail(MNotesFailType.BADREQUEST, ErrorMessages.NameRequired("note"));
 
         if (createNoteDto.Name.Length > MaxNameLength)
-            return new MNoteProcessFail(MNotesFailType.BADREQUEST,ErrorMessages.NameTooLong("note", MaxNameLength));
+            return new MNoteProcessFail(MNotesFailType.BADREQUEST, ErrorMessages.NameTooLong("note", MaxNameLength));
 
         var newNote = new Note
         {
@@ -161,8 +161,8 @@ public class NoteProvider : INoteProvider
             var oldNote = await _noteRepository.GetByIdAsync(noteDto.Id, ct).ConfigureAwait(false);
 
             if (oldNote is null)
-                return new MNoteProcessFail(MNotesFailType.NOTFOUND,ErrorMessages.EntryDoesNotExist(noteDto.Id));
-            
+                return new MNoteProcessFail(MNotesFailType.NOTFOUND, ErrorMessages.EntryDoesNotExist(noteDto.Id));
+
             var updateNote = new Note
             {
                 Id = oldNote.Id,

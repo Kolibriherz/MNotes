@@ -28,11 +28,11 @@ public class NoteEndpointDefinition : IEndpointDefinition
     /// <inheritdoc/>
     public void AddEndpoints(WebApplication app)
     {
-         app.MapGet(MNotesRoutes.Endpoints.NoteEndpoints.GetAll, _noteRequestHandler.GetAllNotes);
-         app.MapPost(MNotesRoutes.Endpoints.NoteEndpoints.Create,([FromBody] CreateNoteDto createNoteDto, CancellationToken ct) => _noteRequestHandler.CreateNote(createNoteDto,ct));
-         app.MapPut(MNotesRoutes.Endpoints.NoteEndpoints.Update, ([FromBody] NoteDto noteDto, CancellationToken ct)=>_noteRequestHandler.UpdateNote(noteDto,ct));
-         app.MapDelete(MNotesRoutes.Endpoints.NoteEndpoints.Delete+"/{id}", _noteRequestHandler.DeleteNote);
-         app.MapGet(MNotesRoutes.Endpoints.NoteEndpoints.LoadPreviousVersion+"/{noteId}", _noteRequestHandler.LoadPreviousVersion);
-         app.MapGet(MNotesRoutes.Endpoints.NoteEndpoints.GetHistory+"/{noteId}", _noteRequestHandler.GetHistory);
+        app.MapGet(MNotesRoutes.Endpoints.NoteEndpoints.GetAll, _noteRequestHandler.GetAllNotes);
+        app.MapPost(MNotesRoutes.Endpoints.NoteEndpoints.Create, ([FromBody] CreateNoteDto createNoteDto, CancellationToken ct) => _noteRequestHandler.CreateNote(createNoteDto, ct));
+        app.MapPut(MNotesRoutes.Endpoints.NoteEndpoints.Update, ([FromBody] NoteDto noteDto, CancellationToken ct) => _noteRequestHandler.UpdateNote(noteDto, ct));
+        app.MapDelete(MNotesRoutes.Endpoints.NoteEndpoints.Delete + "/{id}", _noteRequestHandler.DeleteNote);
+        app.MapGet(MNotesRoutes.Endpoints.NoteEndpoints.LoadPreviousVersion + "/{noteId}", _noteRequestHandler.LoadPreviousVersion);
+        app.MapGet(MNotesRoutes.Endpoints.NoteEndpoints.GetHistory + "/{noteId}", _noteRequestHandler.GetHistory);
     }
 }

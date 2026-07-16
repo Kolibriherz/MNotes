@@ -19,7 +19,7 @@ public static class HubRegistrationExtension
     public static WebApplication MapHubs(this WebApplication app)
     {
         app.MapHub<NoteHub>(MNotesRoutes.Hubs.Name);
-        
+
         return app;
     }
 }

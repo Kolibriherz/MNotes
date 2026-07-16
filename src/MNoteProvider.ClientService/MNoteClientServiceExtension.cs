@@ -5,7 +5,7 @@ using MNoteProvider.Common;
 
 namespace MNoteProvider.ClientService;
 /// <summary>Provides dependency injection registration for the MNote client service.</summary>
-public static class MNoteClientServiceExtension 
+public static class MNoteClientServiceExtension
 {
     /// <summary>Registers the MNote client service, note hub connection and related services.</summary>
     /// <param name="services">The service collection to register the services in.</param>
@@ -15,17 +15,17 @@ public static class MNoteClientServiceExtension
     {
         if (!baseUri.ToString().EndsWith("/"))
             baseUri = new Uri(baseUri.ToString() + "/");
-        
 
-        var hubAddress = new Uri(baseUri, MNotesRoutes.Hubs.Name);   
+
+        var hubAddress = new Uri(baseUri, MNotesRoutes.Hubs.Name);
         services.AddSingleton(new NoteHubConOptions { HubAddress = hubAddress });
         services.AddSingleton<NoteHubCon>();
         services.AddSingleton<NoteEventRelay>();
-        services.AddSingleton<INoteEventRelay>(sp => sp.GetRequiredService<NoteEventRelay>()); 
-        
+        services.AddSingleton<INoteEventRelay>(sp => sp.GetRequiredService<NoteEventRelay>());
+
         services.AddHttpClient<IMNoteClientService, MNoteClientService>(c => c.BaseAddress = baseUri);
         services.AddHostedService<NoteHubConnectionStarter>();
-        
+
         return services;
     }
 }

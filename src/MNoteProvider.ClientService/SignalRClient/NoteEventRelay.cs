@@ -6,20 +6,20 @@ namespace MNoteProvider.ClientService.SignalRClient;
 public sealed class NoteEventRelay : INoteEventRelay, IDisposable
 {
     private readonly NoteHubCon _hubCon;
-    
+
     /// <inheritdoc/>
     public event Action<NoteDto>? NoteCreatedNotification;
-    
+
     /// <inheritdoc/>
     public event Action<NoteDto>? NoteUpdatedNotification;
-    
+
     /// <inheritdoc/>
-    public event Action<Guid>?    NoteDeletedNotification;
+    public event Action<Guid>? NoteDeletedNotification;
 
     /// <summary>Initializes a new instance of the note event relay.</summary>
     /// <param name="hubCon">The note hub connection that provides note events.</param>
-    public NoteEventRelay(NoteHubCon hubCon) => _hubCon = hubCon;   
-    
+    public NoteEventRelay(NoteHubCon hubCon) => _hubCon = hubCon;
+
     /// <inheritdoc/>
     public void Subscribe()
     {
@@ -30,7 +30,7 @@ public sealed class NoteEventRelay : INoteEventRelay, IDisposable
 
     private void OnNoteCreated(NoteDto dto) => NoteCreatedNotification?.Invoke(dto);
     private void OnNoteUpdated(NoteDto dto) => NoteUpdatedNotification?.Invoke(dto);
-    private void OnNoteDeleted(Guid id)     => NoteDeletedNotification?.Invoke(id);
+    private void OnNoteDeleted(Guid id) => NoteDeletedNotification?.Invoke(id);
 
     /// <summary>Detaches all handlers from the underlying hub connection.</summary>
     public void Dispose()

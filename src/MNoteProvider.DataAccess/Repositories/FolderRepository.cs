@@ -22,13 +22,13 @@ public interface IFolderRepository : IBaseRepository<IFolder>;
 /// All behaviour is inherited from <see cref="BaseRepository{TEntity, TInterface}"/>.
 /// Folder-specific queries that fall outside the standard CRUD surface belong here.
 /// </remarks>
-public sealed class FolderRepository :  BaseRepository<Folder, IFolder>, IFolderRepository
+public sealed class FolderRepository : BaseRepository<Folder, IFolder>, IFolderRepository
 {
     /// <summary>
     /// Initialises a new repository bound to the given database.
     /// </summary>
     /// <param name="connectionString">The PostgreSQL connection string.</param>
-    public FolderRepository(string connectionString):base(connectionString)
+    public FolderRepository(string connectionString) : base(connectionString)
     {
     }
 }

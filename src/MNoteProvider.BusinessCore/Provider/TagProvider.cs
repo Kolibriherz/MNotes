@@ -74,7 +74,7 @@ public class TagProvider : ITagProvider
     public async Task<OneOf<Guid, MNoteProcessFail>> CreateTag(string name, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(name))
-            return new MNoteProcessFail(MNotesFailType.BADREQUEST,ErrorMessages.NameRequired("tag"));
+            return new MNoteProcessFail(MNotesFailType.BADREQUEST, ErrorMessages.NameRequired("tag"));
 
         if (name.Length > MaxNameLength)
             return new MNoteProcessFail(MNotesFailType.BADREQUEST, ErrorMessages.NameTooLong("tag", MaxNameLength));

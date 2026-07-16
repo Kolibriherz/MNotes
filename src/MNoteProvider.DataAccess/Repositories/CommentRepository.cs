@@ -31,7 +31,7 @@ public interface ICommentRepository : IBaseRepository<IComment>
 /// Standard CRUD operations are inherited from <see cref="BaseRepository{TEntity, TInterface}"/>.
 /// This repository adds queries that are specific to comments.
 /// </remarks>
-public sealed class CommentRepository :  BaseRepository<Comment, IComment>, ICommentRepository
+public sealed class CommentRepository : BaseRepository<Comment, IComment>, ICommentRepository
 {
     private static readonly string _noteIdColumn = ColumnNameOf(nameof(Comment.NoteId));
 
@@ -39,7 +39,7 @@ public sealed class CommentRepository :  BaseRepository<Comment, IComment>, ICom
     /// Initializes a new instance of the <see cref="CommentRepository"/> class.
     /// </summary>
     /// <param name="connectionString">The connection string used to create database connections.</param>
-    public CommentRepository(string connectionString):base(connectionString)
+    public CommentRepository(string connectionString) : base(connectionString)
     {
     }
 
@@ -52,7 +52,7 @@ public sealed class CommentRepository :  BaseRepository<Comment, IComment>, ICom
             new CommandDefinition
             (
                 SelectAllByNoteIdSql,
-                new {noteId},
+                new { noteId },
                 cancellationToken: ct
             )
 

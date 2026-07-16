@@ -28,7 +28,7 @@ public static class MNoteBusinessCoreStartUpExtension
         services.AddSingleton<IFolderProvider, FolderProvider>();
         services.AddSingleton<ITagProvider, TagProvider>();
         services.AddSingleton<INoteTagAssignmentProvider, NoteTagAssignmentProvider>();
-        
+
         return services;
-    }   
+    }
 }

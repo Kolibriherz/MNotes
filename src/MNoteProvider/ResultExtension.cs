@@ -21,11 +21,11 @@ public static class ResultExtensions
     public static IResult ToIResult(this MNoteProcessFail fail)
         => fail.FailType switch
         {
-            MNotesFailType.NOTFOUND     => Results.Json(fail, statusCode: 404),
-            MNotesFailType.BADREQUEST        => Results.Json(fail, statusCode: 400),
+            MNotesFailType.NOTFOUND => Results.Json(fail, statusCode: 404),
+            MNotesFailType.BADREQUEST => Results.Json(fail, statusCode: 400),
             MNotesFailType.UNAUTHORIZED => Results.Json(fail, statusCode: 401),
-            MNotesFailType.FORBID       => Results.Json(fail, statusCode: 403),
-            MNotesFailType.CONFLICT     => Results.Json(fail, statusCode: 409),
-            _                            => Results.Json(fail, statusCode: 500)
+            MNotesFailType.FORBID => Results.Json(fail, statusCode: 403),
+            MNotesFailType.CONFLICT => Results.Json(fail, statusCode: 409),
+            _ => Results.Json(fail, statusCode: 500)
         };
 }

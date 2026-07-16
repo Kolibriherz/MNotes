@@ -98,7 +98,7 @@ public class CommentProvider : ICommentProvider
         catch (OperationCanceledException) { throw; }
         catch (PostgresException e)
         {
-            _logger.LogError(e, "Database error while creating comment {CommentId} for note {NoteId}",newComment.Id, newComment.NoteId);
+            _logger.LogError(e, "Database error while creating comment {CommentId} for note {NoteId}", newComment.Id, newComment.NoteId);
             return DatabaseFailureMapper.Map(e, "save", "comment");
         }
     }
@@ -147,7 +147,7 @@ public class CommentProvider : ICommentProvider
         catch (PostgresException e)
         {
             _logger.LogError(e, "Database error while deleting comment {CommentId}", id);
-            return DatabaseFailureMapper.Map( e, "delete", "comment");
+            return DatabaseFailureMapper.Map(e, "delete", "comment");
         }
     }
 }

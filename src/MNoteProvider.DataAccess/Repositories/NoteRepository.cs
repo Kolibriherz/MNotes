@@ -28,7 +28,7 @@ public sealed class NoteRepository : BaseRepository<Note, INote>, INoteRepositor
     /// Initialises a new repository bound to the given database.
     /// </summary>
     /// <param name="connectionString">The PostgreSQL connection string.</param>
-    public NoteRepository(string connectionString):base(connectionString)
+    public NoteRepository(string connectionString) : base(connectionString)
     {
     }
 }

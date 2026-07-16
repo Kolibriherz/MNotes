@@ -18,7 +18,7 @@ public interface INoteDto
     /// <summary>The date the note was created.</summary>
     DateTime CreationDate { get; init; }
     /// <summary>The date of the last change.</summary>
-     DateTime ChangeDate { get; set; }
+    DateTime ChangeDate { get; set; }
 }
 
 

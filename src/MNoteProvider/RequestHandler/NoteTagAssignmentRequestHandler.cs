@@ -32,7 +32,7 @@ public interface INoteTagAssignmentRequestHandler
     /// <c>201 Created</c> with the identifier of the created assignment, or an error
     /// response derived from the failure returned by the business layer.
     /// </returns>
-    Task<IResult> AssignTag(AssignmentDto assignmentDto,CancellationToken ct = default);
+    Task<IResult> AssignTag(AssignmentDto assignmentDto, CancellationToken ct = default);
 
     /// <summary>
     /// Removes the assignment between a note and a tag.
@@ -66,18 +66,18 @@ public class NoteTagAssignmentRequestHandler : INoteTagAssignmentRequestHandler
     public async Task<IResult> GetAllNoteTagAssignments(CancellationToken ctx = default)
     {
         var mNoteTagAssignmentsResult = await _tagProvider.GetAllNoteTagAssignments(ctx).ConfigureAwait(false);
-        return   mNoteTagAssignmentsResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
+        return mNoteTagAssignmentsResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
     }
     /// <inheritdoc/>
     public async Task<IResult> AssignTag(AssignmentDto assignmentDto, CancellationToken ctx = default)
     {
-        var mNoteTagAssignmentsResult = await _tagProvider.AssignTag(assignmentDto,ctx).ConfigureAwait(false);
+        var mNoteTagAssignmentsResult = await _tagProvider.AssignTag(assignmentDto, ctx).ConfigureAwait(false);
         return mNoteTagAssignmentsResult.Match(id => Results.Created((string?)null, id), fail => fail.ToIResult());
     }
     /// <inheritdoc/>
     public async Task<IResult> UnassignTag(Guid noteId, Guid tagId, CancellationToken ctx = default)
     {
         var mNoteTagAssignmentsResult = await _tagProvider.UnassignTag(noteId, tagId, ctx).ConfigureAwait(false);
-        return   mNoteTagAssignmentsResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
+        return mNoteTagAssignmentsResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
     }
 }

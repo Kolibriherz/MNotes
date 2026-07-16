@@ -32,7 +32,7 @@ public interface ITagRequestHandler
     /// <c>201 Created</c> with the identifier of the created tag, or an error
     /// response derived from the failure returned by the business layer.
     /// </returns>
-    Task<IResult> CreateTag(string name,CancellationToken ct = default);
+    Task<IResult> CreateTag(string name, CancellationToken ct = default);
 
     /// <summary>
     /// Deletes the tag with the given id.
@@ -63,13 +63,13 @@ public class TagRequestHandler : ITagRequestHandler
     public async Task<IResult> GetAllTags(CancellationToken ct = default)
     {
         var mTagsResult = await _tagProvider.GetAllTags(ct).ConfigureAwait(false);
-        return   mTagsResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
+        return mTagsResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
     }
 
     /// <inheritdoc/>
     public async Task<IResult> CreateTag(string name, CancellationToken ct = default)
     {
-        var mTagsResult = await _tagProvider.CreateTag(name,ct).ConfigureAwait(false);
+        var mTagsResult = await _tagProvider.CreateTag(name, ct).ConfigureAwait(false);
         return mTagsResult.Match(id => Results.Created((string?)null, id), fail => fail.ToIResult());
     }
 
@@ -77,7 +77,7 @@ public class TagRequestHandler : ITagRequestHandler
     public async Task<IResult> DeleteTag(Guid id, CancellationToken ct = default)
     {
         var mTagsResult = await _tagProvider.DeleteTag(id, ct).ConfigureAwait(false);
-        return   mTagsResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
-       
+        return mTagsResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
+
     }
 }

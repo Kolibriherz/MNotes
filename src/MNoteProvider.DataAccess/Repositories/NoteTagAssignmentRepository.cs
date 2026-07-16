@@ -43,7 +43,7 @@ public interface INoteTagAssignmentRepository : IBaseRepository<INoteTagAssignme
 /// Only deletion by composite key is implemented here, because the generic base addresses rows
 /// solely by their primary key.
 /// </remarks>
-public sealed class NoteTagAssignmentRepository: BaseRepository<NoteTagAssignment, INoteTagAssignment>, INoteTagAssignmentRepository
+public sealed class NoteTagAssignmentRepository : BaseRepository<NoteTagAssignment, INoteTagAssignment>, INoteTagAssignmentRepository
 {
     private static readonly string _noteIdColumn = ColumnNameOf(nameof(NoteTagAssignment.NoteId));
     private static readonly string _tagIdColumn = ColumnNameOf(nameof(NoteTagAssignment.TagId));
@@ -70,7 +70,7 @@ public sealed class NoteTagAssignmentRepository: BaseRepository<NoteTagAssignmen
             )
         ).ConfigureAwait(false);
         return deletedRowCount == 1;
-    
+
     }
 
     /// <summary>

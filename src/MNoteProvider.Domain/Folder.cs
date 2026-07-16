@@ -1,6 +1,6 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using MNoteProvider.Domain.Abstractions;
 using MNoteProvider.Domain.Attributes;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MNoteProvider.Domain;
 
@@ -9,7 +9,7 @@ namespace MNoteProvider.Domain;
 /// hierarchy is an adjacency list whose root folder is its own parent.
 /// </summary>
 [Table("folder")]
-public class Folder :BaseDomainObject, IFolder
+public class Folder : BaseDomainObject, IFolder
 {
     /// <inheritdoc/>
     [Column("name")] public string Name { get; set; } = string.Empty;

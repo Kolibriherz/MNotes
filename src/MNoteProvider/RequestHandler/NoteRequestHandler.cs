@@ -76,7 +76,7 @@ public class NoteRequestHandler : INoteRequestHandler
     public async Task<IResult> CreateNote(CreateNoteDto createNoteDto, CancellationToken ct = default)
     {
         var mNotesResult = await _noteProvider.CreateNote(createNoteDto, ct).ConfigureAwait(false);
-        return mNotesResult.Match( id => Results.Created((string?)null, id), fail => fail.ToIResult());
+        return mNotesResult.Match(id => Results.Created((string?)null, id), fail => fail.ToIResult());
     }
 
     /// <inheritdoc/>

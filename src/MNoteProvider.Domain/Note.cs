@@ -12,7 +12,7 @@ namespace MNoteProvider.Domain;
 public class Note : BaseDomainObject, INote
 {
     /// <inheritdoc/>
-    [Column("name")]public string Name { get; set; } = string.Empty;
+    [Column("name")] public string Name { get; set; } = string.Empty;
     /// <inheritdoc/>
     [Column("content")] public string Content { get; set; } = string.Empty;
     /// <inheritdoc/>

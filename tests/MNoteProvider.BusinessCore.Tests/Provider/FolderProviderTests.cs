@@ -77,14 +77,14 @@ public class FolderProviderTests
         Assert.That(repository.UpdateCallCount, Is.EqualTo(0));
     }
 
-    private static Folder CreateFolder(Guid id, Guid parentId,string name) =>new()
-        {
-            Id = id,
-            ParentId = parentId,
-            Name = name,
-            CreationDate = DateTime.UnixEpoch,
-            Doeom = DateTime.UnixEpoch
-        };
+    private static Folder CreateFolder(Guid id, Guid parentId, string name) => new()
+    {
+        Id = id,
+        ParentId = parentId,
+        Name = name,
+        CreationDate = DateTime.UnixEpoch,
+        Doeom = DateTime.UnixEpoch
+    };
 
     private sealed class FakeFolderRepository : IFolderRepository
     {
@@ -97,7 +97,7 @@ public class FolderProviderTests
 
         public int UpdateCallCount { get; private set; }
 
-        public Task<IFolder?> GetByIdAsync( Guid id,CancellationToken ct = default)
+        public Task<IFolder?> GetByIdAsync(Guid id, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
             return Task.FromResult<IFolder?>(
@@ -107,16 +107,16 @@ public class FolderProviderTests
         public Task<IEnumerable<IFolder>> GetAllAsync(CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            return Task.FromResult<IEnumerable<IFolder>>( _folders.Values);
+            return Task.FromResult<IEnumerable<IFolder>>(_folders.Values);
         }
 
-        public Task<bool> CreateAsync( IFolder entity,CancellationToken ct = default)
+        public Task<bool> CreateAsync(IFolder entity, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
             return Task.FromResult(_folders.TryAdd(entity.Id, entity));
         }
 
-        public Task<bool> UpdateAsync(IFolder entity,CancellationToken ct = default)
+        public Task<bool> UpdateAsync(IFolder entity, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
             UpdateCallCount++;
@@ -128,7 +128,7 @@ public class FolderProviderTests
             return Task.FromResult(true);
         }
 
-        public Task<bool> DeleteAsync(Guid id,CancellationToken ct = default)
+        public Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
             return Task.FromResult(_folders.Remove(id));

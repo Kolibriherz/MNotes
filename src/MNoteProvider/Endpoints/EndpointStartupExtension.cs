@@ -27,7 +27,7 @@ public static class EndpointStartupExtension
         services.AddSingleton<ICommentRequestHandler, CommentRequestHandler>();
         services.AddSingleton<ITagRequestHandler, TagRequestHandler>();
         services.AddSingleton<INoteTagAssignmentRequestHandler, NoteTagAssignmentRequestHandler>();
-        
+
         services.AddSingleton<IEndpointDefinition, IsAvailableEndpointDefinition>();
         services.AddSingleton<IEndpointDefinition, NoteEndpointDefinition>();
         services.AddSingleton<IEndpointDefinition, FolderEndpointDefinition>();

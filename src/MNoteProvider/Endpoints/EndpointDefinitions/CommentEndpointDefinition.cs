@@ -29,9 +29,9 @@ public class CommentEndpointDefinition : IEndpointDefinition
     /// <inheritdoc/>
     public void AddEndpoints(WebApplication app)
     {
-        app.MapGet(MNotesRoutes.Endpoints.CommentEndpoints.GetAllByNote+"/{id}", _commentRequestHandler.GetAllCommentsByNote);
-        app.MapPost(MNotesRoutes.Endpoints.CommentEndpoints.Create,([FromBody] CreateCommentDto createCommentDto, CancellationToken ct) => _commentRequestHandler.CreateComment(createCommentDto,ct));
-        app.MapPut(MNotesRoutes.Endpoints.CommentEndpoints.Update, ([FromBody] CommentDto commentDto, CancellationToken ct) =>_commentRequestHandler.UpdateComment(commentDto,ct));
-        app.MapDelete(MNotesRoutes.Endpoints.CommentEndpoints.Delete+"/{id}", _commentRequestHandler.DeleteComment);
+        app.MapGet(MNotesRoutes.Endpoints.CommentEndpoints.GetAllByNote + "/{id}", _commentRequestHandler.GetAllCommentsByNote);
+        app.MapPost(MNotesRoutes.Endpoints.CommentEndpoints.Create, ([FromBody] CreateCommentDto createCommentDto, CancellationToken ct) => _commentRequestHandler.CreateComment(createCommentDto, ct));
+        app.MapPut(MNotesRoutes.Endpoints.CommentEndpoints.Update, ([FromBody] CommentDto commentDto, CancellationToken ct) => _commentRequestHandler.UpdateComment(commentDto, ct));
+        app.MapDelete(MNotesRoutes.Endpoints.CommentEndpoints.Delete + "/{id}", _commentRequestHandler.DeleteComment);
     }
 }

@@ -21,7 +21,7 @@ public interface ITagRepository : IBaseRepository<ITag>;
 /// All behaviour is inherited from <see cref="BaseRepository{TEntity, TInterface}"/>.
 /// Tag-specific queries that fall outside the standard CRUD surface belong here.
 /// </remarks>
-public sealed class TagRepository : BaseRepository<Tag, ITag>,ITagRepository
+public sealed class TagRepository : BaseRepository<Tag, ITag>, ITagRepository
 {
     /// <summary>
     /// Initialises a new repository bound to the given database.

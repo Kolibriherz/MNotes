@@ -7,8 +7,8 @@ namespace MNoteProvider.Domain;
 /// Persistence entity of a comment, mapped to the <c>comment</c> table.
 /// Deleting the owning note deletes its comments.
 /// </summary>
-[TableAttribute( "comment")]
-public class Comment :BaseDomainObject, IComment
+[TableAttribute("comment")]
+public class Comment : BaseDomainObject, IComment
 {
     /// <inheritdoc/>
     [Column("content")] public string Content { get; set; } = string.Empty;

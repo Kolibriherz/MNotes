@@ -7,13 +7,13 @@ public interface INoteEventRelay
 {
     /// <summary>Occurs when a note has been created.</summary>
     event Action<NoteDto>? NoteCreatedNotification;
-    
+
     /// <summary>Occurs when a note has been updated.</summary>
     event Action<NoteDto>? NoteUpdatedNotification;
-    
+
     /// <summary>Occurs when a note has been deleted.</summary>
-    event Action<Guid>?    NoteDeletedNotification;
-    
+    event Action<Guid>? NoteDeletedNotification;
+
     /// <summary>Subscribes to note events from the hub connection.</summary>
     void Subscribe();
 }

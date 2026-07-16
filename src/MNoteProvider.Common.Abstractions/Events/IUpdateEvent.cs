@@ -6,10 +6,10 @@ namespace MNoteProvider.Common.Abstractions.Events;
 /// A domain event describing the update of a note, carrying the state before and after the change.
 /// </summary>
 /// <typeparam name="T">The concrete note DTO type carried by the event.</typeparam>
-public interface IUpdateEvent<T> :IBaseEvent where T : INoteDto
+public interface IUpdateEvent<T> : IBaseEvent where T : INoteDto
 {
     /// <summary>The state of the note immediately before the change.</summary>
-    T OldNote { get;  set; }
+    T OldNote { get; set; }
     /// <summary>The state of the note after the change.</summary>
-    T NewNote { get;  set; }
+    T NewNote { get; set; }
 }

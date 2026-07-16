@@ -28,7 +28,7 @@ public class NoteTagAssignmentEndpointDefinition : IEndpointDefinition
     public void AddEndpoints(WebApplication app)
     {
         app.MapGet(MNotesRoutes.Endpoints.NoteTagAssignmentEndpoints.GetAll, _noteTagAssignmentRequestHandler.GetAllNoteTagAssignments);
-        app.MapPost(MNotesRoutes.Endpoints.NoteTagAssignmentEndpoints.Assign,([FromBody] AssignmentDto assignmentDto, CancellationToken ct) => _noteTagAssignmentRequestHandler.AssignTag(assignmentDto,ct));
-        app.MapDelete(MNotesRoutes.Endpoints.NoteTagAssignmentEndpoints.Unassign+"/{noteId}/{tagId}", _noteTagAssignmentRequestHandler.UnassignTag);
+        app.MapPost(MNotesRoutes.Endpoints.NoteTagAssignmentEndpoints.Assign, ([FromBody] AssignmentDto assignmentDto, CancellationToken ct) => _noteTagAssignmentRequestHandler.AssignTag(assignmentDto, ct));
+        app.MapDelete(MNotesRoutes.Endpoints.NoteTagAssignmentEndpoints.Unassign + "/{noteId}/{tagId}", _noteTagAssignmentRequestHandler.UnassignTag);
     }
 }

@@ -81,12 +81,12 @@ public class FolderProvider : IFolderProvider
     public async Task<OneOf<Guid, MNoteProcessFail>> CreateFolder(CreateFolderDto createFolderDto, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(createFolderDto.Name))
-            return new MNoteProcessFail(MNotesFailType.BADREQUEST,ErrorMessages.NameRequired("folder"));
+            return new MNoteProcessFail(MNotesFailType.BADREQUEST, ErrorMessages.NameRequired("folder"));
 
         if (createFolderDto.Name.Length > MaxNameLength)
             return new MNoteProcessFail(MNotesFailType.BADREQUEST, ErrorMessages.NameTooLong("folder", MaxNameLength));
 
-        var newFolder = new Folder 
+        var newFolder = new Folder
         {
             Id = Guid.NewGuid(),
             Doeom = DateTime.UtcNow,
@@ -98,8 +98,8 @@ public class FolderProvider : IFolderProvider
         try
         {
             if (await _folderRepository.GetByIdAsync(createFolderDto.ParentId, ct).ConfigureAwait(false) is null)
-                return new MNoteProcessFail(MNotesFailType.NOTFOUND,ErrorMessages.EntryDoesNotExist(createFolderDto.ParentId));
-            
+                return new MNoteProcessFail(MNotesFailType.NOTFOUND, ErrorMessages.EntryDoesNotExist(createFolderDto.ParentId));
+
             var saved = await _folderRepository.CreateAsync(newFolder, ct).ConfigureAwait(false);
             return saved
                 ? newFolder.Id
@@ -123,24 +123,24 @@ public class FolderProvider : IFolderProvider
                 return new MNoteProcessFail(MNotesFailType.BADREQUEST, ErrorMessages.NameRequired("folder"));
 
             if (folderDto.Name.Length > MaxNameLength)
-                return new MNoteProcessFail(MNotesFailType.BADREQUEST,ErrorMessages.NameTooLong("folder", MaxNameLength));
+                return new MNoteProcessFail(MNotesFailType.BADREQUEST, ErrorMessages.NameTooLong("folder", MaxNameLength));
 
             var updateFolder = await _folderRepository.GetByIdAsync(folderDto.Id, ct).ConfigureAwait(false);
 
             if (updateFolder is null)
-                return new MNoteProcessFail(MNotesFailType.NOTFOUND,ErrorMessages.EntryDoesNotExist(folderDto.Id));
+                return new MNoteProcessFail(MNotesFailType.NOTFOUND, ErrorMessages.EntryDoesNotExist(folderDto.Id));
 
-            if (folderDto.Id == _rootFolderId &&folderDto.ParentId != _rootFolderId)
-                return new MNoteProcessFail(MNotesFailType.BADREQUEST,ErrorMessages.RootFolderNotMovable);
-            
+            if (folderDto.Id == _rootFolderId && folderDto.ParentId != _rootFolderId)
+                return new MNoteProcessFail(MNotesFailType.BADREQUEST, ErrorMessages.RootFolderNotMovable);
+
 
             if (await _folderRepository.GetByIdAsync(folderDto.ParentId, ct).ConfigureAwait(false) is null)
                 return new MNoteProcessFail(MNotesFailType.NOTFOUND, ErrorMessages.EntryDoesNotExist(folderDto.ParentId));
-            
 
-            if (await WouldCreateCycleAsync(folderDto.Id,folderDto.ParentId,ct).ConfigureAwait(false))
-                return new MNoteProcessFail(MNotesFailType.CONFLICT,ErrorMessages.FolderMoveWouldCreateCycle( folderDto.Id,folderDto.ParentId));
-            
+
+            if (await WouldCreateCycleAsync(folderDto.Id, folderDto.ParentId, ct).ConfigureAwait(false))
+                return new MNoteProcessFail(MNotesFailType.CONFLICT, ErrorMessages.FolderMoveWouldCreateCycle(folderDto.Id, folderDto.ParentId));
+
             updateFolder.Name = folderDto.Name;
             updateFolder.ParentId = folderDto.ParentId;
             updateFolder.Doeom = DateTime.UtcNow;
@@ -164,8 +164,8 @@ public class FolderProvider : IFolderProvider
         try
         {
             if (id == _rootFolderId)
-                return new MNoteProcessFail(MNotesFailType.BADREQUEST,ErrorMessages.RootFolderNotDeletable);
-            
+                return new MNoteProcessFail(MNotesFailType.BADREQUEST, ErrorMessages.RootFolderNotDeletable);
+
             if (await _folderRepository.GetByIdAsync(id, ct).ConfigureAwait(false) is null)
                 return new MNoteProcessFail(MNotesFailType.NOTFOUND, ErrorMessages.EntryDoesNotExist(id));
 

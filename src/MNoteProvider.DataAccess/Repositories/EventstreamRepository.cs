@@ -18,15 +18,15 @@ namespace MNoteProvider.DataAccess.Repositories;
 public interface IEventstreamRepository
 {
     /// <summary>
-   /// Appends an event to the stream.
-   /// </summary>
-   /// <typeparam name="T">The event type. Its runtime type name is stored as the discriminator.</typeparam>
-   /// <param name="payload">The event to append. Serialised to JSON.</param>
-   /// <param name="channel">The channel the event is published on.</param>
-   /// <param name="ct">A token to observe while waiting for the operation to complete.</param>
-   /// <returns>
-   /// <see langword="true"/> if exactly one row was appended; otherwise <see langword="false"/>.
-   /// </returns>
+    /// Appends an event to the stream.
+    /// </summary>
+    /// <typeparam name="T">The event type. Its runtime type name is stored as the discriminator.</typeparam>
+    /// <param name="payload">The event to append. Serialised to JSON.</param>
+    /// <param name="channel">The channel the event is published on.</param>
+    /// <param name="ct">A token to observe while waiting for the operation to complete.</param>
+    /// <returns>
+    /// <see langword="true"/> if exactly one row was appended; otherwise <see langword="false"/>.
+    /// </returns>
     Task<bool> CreateAsync<T>(T payload, string channel, CancellationToken ct = default) where T : IBaseEvent;
 
     /// <summary>
@@ -44,7 +44,7 @@ public interface IEventstreamRepository
     /// <exception cref="InvalidOperationException">
     /// Thrown when a stored payload cannot be deserialised into <typeparamref name="T"/>.
     /// </exception>
-    Task<IEnumerable<T>> GetAllAsync<T>(Guid ownerId,CancellationToken ct = default) where T : IBaseEvent;
+    Task<IEnumerable<T>> GetAllAsync<T>(Guid ownerId, CancellationToken ct = default) where T : IBaseEvent;
 
     /// <summary>
     /// Retrieves all events of type <typeparamref name="T"/> belonging to the given owner
@@ -105,24 +105,28 @@ public sealed class EventstreamRepository : IEventstreamRepository
         _connectionString = connectionString;
     }
     /// <inheritdoc />
-    public async  Task<bool> CreateAsync<T>(T payload, string channel, CancellationToken ct = default) where T : IBaseEvent
+    public async Task<bool> CreateAsync<T>(T payload, string channel, CancellationToken ct = default) where T : IBaseEvent
     {
- 
-            var payloadString = JsonSerializer.Serialize(payload, payload.GetType());
-            await using var conn = new NpgsqlConnection(_connectionString);
-            var insertedRowCount = await conn.ExecuteAsync
+
+        var payloadString = JsonSerializer.Serialize(payload, payload.GetType());
+        await using var conn = new NpgsqlConnection(_connectionString);
+        var insertedRowCount = await conn.ExecuteAsync
+        (
+            new CommandDefinition
             (
-                new CommandDefinition
-                (
-                    InsertSql,
-                    new
-                    {
-                       Id= payload.Id, Active = true, OwnerId = payload.OwnerId, Channel = channel,
-                        PayloadType = payload.GetType().Name, Payload = payloadString
-                    }, cancellationToken: ct
-                )
-            ).ConfigureAwait(false);
-            return insertedRowCount == 1;
+                InsertSql,
+                new
+                {
+                    Id = payload.Id,
+                    Active = true,
+                    OwnerId = payload.OwnerId,
+                    Channel = channel,
+                    PayloadType = payload.GetType().Name,
+                    Payload = payloadString
+                }, cancellationToken: ct
+            )
+        ).ConfigureAwait(false);
+        return insertedRowCount == 1;
     }
     /// <inheritdoc />
     public async Task<IEnumerable<T>> GetAllAsync<T>(Guid ownerId, CancellationToken ct = default) where T : IBaseEvent
@@ -130,7 +134,7 @@ public sealed class EventstreamRepository : IEventstreamRepository
         return await QueryPayloadsAsync<T>(SelectByOwnerAndTypeSql, new { OwnerId = ownerId, PayloadType = typeof(T).Name }, ct).ConfigureAwait(false);
     }
     /// <inheritdoc />
-    public async Task<IEnumerable<T>>  GetAllByChannelAsync<T>(Guid ownerId,string channel, CancellationToken ct = default)
+    public async Task<IEnumerable<T>> GetAllByChannelAsync<T>(Guid ownerId, string channel, CancellationToken ct = default)
         where T : IBaseEvent
     {
         return await QueryPayloadsAsync<T>(SelectByOwnerTypeAndChannelSql, new { OwnerId = ownerId, PayloadType = typeof(T).Name, Channel = channel }, ct).ConfigureAwait(false);

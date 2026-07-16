@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 using MNoteProvider.ClientService.Abstractions;
 using MNoteProvider.Common;
 using MNoteProvider.Common.Abstractions.DTOs;
@@ -23,7 +23,7 @@ public class MNoteClientService : IMNoteClientService
         _httpClient = httpClient;
     }
     /// <inheritdoc/>
-    public async Task<OneOf<bool,MNoteProcessFail>> IsAvailable(CancellationToken ct = default)
+    public async Task<OneOf<bool, MNoteProcessFail>> IsAvailable(CancellationToken ct = default)
     {
         string endpoint = MNotesRoutes.Endpoints.IsAvailable;
         try
@@ -37,8 +37,8 @@ public class MNoteClientService : IMNoteClientService
             return new MNoteProcessFail(MNotesFailType.PROBLEM, $"Error while calling {endpoint} in {nameof(IsAvailable)}: {e.Message}");
         }
     }
-    
-#region notes
+
+    #region notes
     /// <inheritdoc/>
     public async Task<OneOf<INoteDto[], MNoteProcessFail>> GetAllNotes(CancellationToken ct = default)
     {
@@ -62,7 +62,7 @@ public class MNoteClientService : IMNoteClientService
         string endpoint = MNotesRoutes.Endpoints.NoteEndpoints.Create;
         try
         {
-            using var result = await _httpClient.PostAsJsonAsync(endpoint,createNoteDto, ct).ConfigureAwait(false);
+            using var result = await _httpClient.PostAsJsonAsync(endpoint, createNoteDto, ct).ConfigureAwait(false);
             return await ReadResponseAsync<Guid>(result, endpoint, nameof(CreateNote), ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
@@ -77,7 +77,7 @@ public class MNoteClientService : IMNoteClientService
         string endpoint = MNotesRoutes.Endpoints.NoteEndpoints.Update;
         try
         {
-            using var result = await _httpClient.PutAsJsonAsync(endpoint,noteDto,ct).ConfigureAwait(false);
+            using var result = await _httpClient.PutAsJsonAsync(endpoint, noteDto, ct).ConfigureAwait(false);
             return await ReadResponseAsync<bool>(result, endpoint, nameof(UpdateNote), ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
@@ -92,7 +92,7 @@ public class MNoteClientService : IMNoteClientService
         string endpoint = MNotesRoutes.Endpoints.NoteEndpoints.Delete + $"/{id}";
         try
         {
-            using var result = await _httpClient.DeleteAsync(endpoint,ct).ConfigureAwait(false);
+            using var result = await _httpClient.DeleteAsync(endpoint, ct).ConfigureAwait(false);
             return await ReadResponseAsync<bool>(result, endpoint, nameof(DeleteNote), ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
@@ -136,13 +136,13 @@ public class MNoteClientService : IMNoteClientService
         }
     }
 
-#endregion
+    #endregion
 
-#region folder
+    #region folder
     /// <inheritdoc/>
-   public async Task<OneOf<IFolderDto[], MNoteProcessFail>> GetAllFolders(CancellationToken ct = default)
-   {
-       string endpoint = MNotesRoutes.Endpoints.FolderEndpoints.GetAll;
+    public async Task<OneOf<IFolderDto[], MNoteProcessFail>> GetAllFolders(CancellationToken ct = default)
+    {
+        string endpoint = MNotesRoutes.Endpoints.FolderEndpoints.GetAll;
         try
         {
             using var result = await _httpClient.GetAsync(endpoint, ct).ConfigureAwait(false);
@@ -155,7 +155,7 @@ public class MNoteClientService : IMNoteClientService
         {
             return new MNoteProcessFail(MNotesFailType.PROBLEM, $"Error while calling {endpoint} in {nameof(GetAllFolders)}: {e.Message}");
         }
-        
+
     }
     /// <inheritdoc/>
     public async Task<OneOf<Guid, MNoteProcessFail>> CreateFolder(CreateFolderDto createFolderDto, CancellationToken ct = default)
@@ -163,7 +163,7 @@ public class MNoteClientService : IMNoteClientService
         string endpoint = MNotesRoutes.Endpoints.FolderEndpoints.Create;
         try
         {
-            using var result = await _httpClient.PostAsJsonAsync(endpoint,createFolderDto, ct).ConfigureAwait(false);
+            using var result = await _httpClient.PostAsJsonAsync(endpoint, createFolderDto, ct).ConfigureAwait(false);
             return await ReadResponseAsync<Guid>(result, endpoint, nameof(CreateFolder), ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
@@ -178,7 +178,7 @@ public class MNoteClientService : IMNoteClientService
         string endpoint = MNotesRoutes.Endpoints.FolderEndpoints.Update;
         try
         {
-            using var result = await _httpClient.PutAsJsonAsync(endpoint,folderDto,ct).ConfigureAwait(false);
+            using var result = await _httpClient.PutAsJsonAsync(endpoint, folderDto, ct).ConfigureAwait(false);
             return await ReadResponseAsync<bool>(result, endpoint, nameof(UpdateFolder), ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
@@ -193,7 +193,7 @@ public class MNoteClientService : IMNoteClientService
         string endpoint = MNotesRoutes.Endpoints.FolderEndpoints.Delete + $"/{id}";
         try
         {
-            using var result = await _httpClient.DeleteAsync(endpoint,ct).ConfigureAwait(false);
+            using var result = await _httpClient.DeleteAsync(endpoint, ct).ConfigureAwait(false);
             return await ReadResponseAsync<bool>(result, endpoint, nameof(DeleteFolder), ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
@@ -203,13 +203,13 @@ public class MNoteClientService : IMNoteClientService
         }
     }
 
-#endregion
+    #endregion
 
-#region comments
+    #region comments
     /// <inheritdoc/>
-  public async Task<OneOf<ICommentDto[], MNoteProcessFail>> GetAllCommentsByNote(Guid id, CancellationToken ct = default)
-  {
-      string endpoint = MNotesRoutes.Endpoints.CommentEndpoints.GetAllByNote + $"/{id}";
+    public async Task<OneOf<ICommentDto[], MNoteProcessFail>> GetAllCommentsByNote(Guid id, CancellationToken ct = default)
+    {
+        string endpoint = MNotesRoutes.Endpoints.CommentEndpoints.GetAllByNote + $"/{id}";
         try
         {
             using var result = await _httpClient.GetAsync(endpoint, ct).ConfigureAwait(false);
@@ -222,7 +222,7 @@ public class MNoteClientService : IMNoteClientService
         {
             return new MNoteProcessFail(MNotesFailType.PROBLEM, $"Error while calling {endpoint} in {nameof(GetAllCommentsByNote)}: {e.Message}");
         }
-        
+
     }
     /// <inheritdoc/>
     public async Task<OneOf<Guid, MNoteProcessFail>> CreateComment(CreateCommentDto createCommentDto, CancellationToken ct = default)
@@ -230,7 +230,7 @@ public class MNoteClientService : IMNoteClientService
         string endpoint = MNotesRoutes.Endpoints.CommentEndpoints.Create;
         try
         {
-            using var result = await _httpClient.PostAsJsonAsync(endpoint,createCommentDto, ct).ConfigureAwait(false);
+            using var result = await _httpClient.PostAsJsonAsync(endpoint, createCommentDto, ct).ConfigureAwait(false);
             return await ReadResponseAsync<Guid>(result, endpoint, nameof(CreateComment), ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
@@ -245,7 +245,7 @@ public class MNoteClientService : IMNoteClientService
         string endpoint = MNotesRoutes.Endpoints.CommentEndpoints.Update;
         try
         {
-            using var result = await _httpClient.PutAsJsonAsync(endpoint,commentDto,ct).ConfigureAwait(false);
+            using var result = await _httpClient.PutAsJsonAsync(endpoint, commentDto, ct).ConfigureAwait(false);
             return await ReadResponseAsync<bool>(result, endpoint, nameof(UpdateComment), ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
@@ -260,7 +260,7 @@ public class MNoteClientService : IMNoteClientService
         string endpoint = MNotesRoutes.Endpoints.CommentEndpoints.Delete + $"/{id}";
         try
         {
-            using var result = await _httpClient.DeleteAsync(endpoint,ct).ConfigureAwait(false);
+            using var result = await _httpClient.DeleteAsync(endpoint, ct).ConfigureAwait(false);
             return await ReadResponseAsync<bool>(result, endpoint, nameof(DeleteComment), ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
@@ -270,13 +270,13 @@ public class MNoteClientService : IMNoteClientService
         }
     }
 
-#endregion
+    #endregion
 
-#region tags
+    #region tags
     /// <inheritdoc/>
-  public async Task<OneOf<ITagDto[], MNoteProcessFail>> GetAllTags(CancellationToken ct = default)
-  {
-      string endpoint = MNotesRoutes.Endpoints.TagEndpoints.GetAll;
+    public async Task<OneOf<ITagDto[], MNoteProcessFail>> GetAllTags(CancellationToken ct = default)
+    {
+        string endpoint = MNotesRoutes.Endpoints.TagEndpoints.GetAll;
         try
         {
             using var result = await _httpClient.GetAsync(endpoint, ct).ConfigureAwait(false);
@@ -296,7 +296,7 @@ public class MNoteClientService : IMNoteClientService
         string endpoint = MNotesRoutes.Endpoints.TagEndpoints.Create;
         try
         {
-            using var result = await _httpClient.PostAsJsonAsync(endpoint,name, ct).ConfigureAwait(false);
+            using var result = await _httpClient.PostAsJsonAsync(endpoint, name, ct).ConfigureAwait(false);
             return await ReadResponseAsync<Guid>(result, endpoint, nameof(CreateTag), ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
@@ -305,14 +305,14 @@ public class MNoteClientService : IMNoteClientService
             return new MNoteProcessFail(MNotesFailType.PROBLEM, $"Error while calling {endpoint} in {nameof(CreateTag)}: {e.Message}");
         }
     }
-    
+
     /// <inheritdoc/>
     public async Task<OneOf<bool, MNoteProcessFail>> DeleteTag(Guid id, CancellationToken ct = default)
     {
         string endpoint = MNotesRoutes.Endpoints.TagEndpoints.Delete + $"/{id}";
         try
         {
-            using var result = await _httpClient.DeleteAsync(endpoint,ct).ConfigureAwait(false);
+            using var result = await _httpClient.DeleteAsync(endpoint, ct).ConfigureAwait(false);
             return await ReadResponseAsync<bool>(result, endpoint, nameof(DeleteTag), ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
@@ -321,11 +321,11 @@ public class MNoteClientService : IMNoteClientService
             return new MNoteProcessFail(MNotesFailType.PROBLEM, $"Error while calling {endpoint} in {nameof(DeleteTag)}: {e.Message}");
         }
     }
-#endregion
+    #endregion
 
-#region notetagassignments
-/// <inheritdoc/>
- public async Task<OneOf<INoteTagAssignmentDto[], MNoteProcessFail>> GetAllNoteTagAssignments(CancellationToken ct = default)
+    #region notetagassignments
+    /// <inheritdoc/>
+    public async Task<OneOf<INoteTagAssignmentDto[], MNoteProcessFail>> GetAllNoteTagAssignments(CancellationToken ct = default)
     {
         string endpoint = MNotesRoutes.Endpoints.NoteTagAssignmentEndpoints.GetAll;
         try
@@ -340,7 +340,7 @@ public class MNoteClientService : IMNoteClientService
         {
             return new MNoteProcessFail(MNotesFailType.PROBLEM, $"Error while calling {endpoint} in {nameof(GetAllNoteTagAssignments)}: {e.Message}");
         }
-        
+
     }
     /// <inheritdoc/>
     public async Task<OneOf<Guid, MNoteProcessFail>> AssignTag(AssignmentDto assignmentDto, CancellationToken ct = default)
@@ -348,7 +348,7 @@ public class MNoteClientService : IMNoteClientService
         string endpoint = MNotesRoutes.Endpoints.NoteTagAssignmentEndpoints.Assign;
         try
         {
-            using var result = await _httpClient.PostAsJsonAsync(endpoint,assignmentDto, ct).ConfigureAwait(false);
+            using var result = await _httpClient.PostAsJsonAsync(endpoint, assignmentDto, ct).ConfigureAwait(false);
             return await ReadResponseAsync<Guid>(result, endpoint, nameof(AssignTag), ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
@@ -357,7 +357,7 @@ public class MNoteClientService : IMNoteClientService
             return new MNoteProcessFail(MNotesFailType.PROBLEM, $"Error while calling {endpoint} in {nameof(AssignTag)}: {e.Message}");
         }
     }
-    
+
     /// <inheritdoc/>
     public async Task<OneOf<bool, MNoteProcessFail>> UnassignTag(AssignmentDto assignmentDto, CancellationToken ct = default)
     {
@@ -375,20 +375,20 @@ public class MNoteClientService : IMNoteClientService
         }
     }
 
-#endregion
+    #endregion
 
-    private async Task<OneOf<T, MNoteProcessFail>> ReadResponseAsync<T>( HttpResponseMessage response, string endpoint, string callerName, CancellationToken ct)
+    private async Task<OneOf<T, MNoteProcessFail>> ReadResponseAsync<T>(HttpResponseMessage response, string endpoint, string callerName, CancellationToken ct)
     {
         if (response.IsSuccessStatusCode)
         {
             var value = await response.Content.ReadFromJsonAsync<T>(ct).ConfigureAwait(false);
 
             return value is not null ? value
-                : new MNoteProcessFail( MNotesFailType.PROBLEM, $"Server returned an empty response while calling {endpoint} in {callerName}");
+                : new MNoteProcessFail(MNotesFailType.PROBLEM, $"Server returned an empty response while calling {endpoint} in {callerName}");
         }
 
         var fail = await response.Content.ReadFromJsonAsync<MNoteProcessFail>(ct).ConfigureAwait(false);
-        return fail ?? new MNoteProcessFail( MNotesFailType.PROBLEM, response.ReasonPhrase ?? $"Error while calling {endpoint} in {callerName}");
+        return fail ?? new MNoteProcessFail(MNotesFailType.PROBLEM, response.ReasonPhrase ?? $"Error while calling {endpoint} in {callerName}");
     }
 }
 

@@ -22,7 +22,7 @@ public static class DatabaseFailureMapper
     /// <param name="action">The database operation that was attempted.</param>
     /// <param name="entity">The type of entity involved in the operation.</param>
     /// <returns>A failure describing the database error without exposing internal details.</returns>
-    public static MNoteProcessFail Map( PostgresException exception,string action, string entity)
+    public static MNoteProcessFail Map(PostgresException exception, string action, string entity)
     {
         return exception.SqlState switch
         {
@@ -31,16 +31,16 @@ public static class DatabaseFailureMapper
                 new MNoteProcessFail(MNotesFailType.CONFLICT, ErrorMessages.EntryAlreadyExists(entity)),
 
             PostgresErrorCodes.ForeignKeyViolation =>
-                new MNoteProcessFail( MNotesFailType.BADREQUEST, ErrorMessages.InvalidReference(entity)),
+                new MNoteProcessFail(MNotesFailType.BADREQUEST, ErrorMessages.InvalidReference(entity)),
 
             PostgresErrorCodes.CheckViolation =>
-                new MNoteProcessFail(MNotesFailType.BADREQUEST,ErrorMessages.InvalidData(entity)),
+                new MNoteProcessFail(MNotesFailType.BADREQUEST, ErrorMessages.InvalidData(entity)),
 
             PostgresErrorCodes.NotNullViolation or PostgresErrorCodes.StringDataRightTruncation =>
-                new MNoteProcessFail(MNotesFailType.BADREQUEST,ErrorMessages.InvalidData(entity)),
+                new MNoteProcessFail(MNotesFailType.BADREQUEST, ErrorMessages.InvalidData(entity)),
 
             _ =>
-                new MNoteProcessFail(MNotesFailType.PROBLEM,ErrorMessages.DatabaseFail(action, entity))
+                new MNoteProcessFail(MNotesFailType.PROBLEM, ErrorMessages.DatabaseFail(action, entity))
         };
     }
 }

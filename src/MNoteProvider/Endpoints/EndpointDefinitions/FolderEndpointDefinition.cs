@@ -29,9 +29,9 @@ public class FolderEndpointDefinition : IEndpointDefinition
     /// <inheritdoc/>
     public void AddEndpoints(WebApplication app)
     {
-         app.MapGet(MNotesRoutes.Endpoints.FolderEndpoints.GetAll, _folderRequestHandler.GetAllFolders);
-         app.MapPost(MNotesRoutes.Endpoints.FolderEndpoints.Create,([FromBody] CreateFolderDto createFolderDto, CancellationToken ct) => _folderRequestHandler.CreateFolder(createFolderDto,ct));
-         app.MapPut(MNotesRoutes.Endpoints.FolderEndpoints.Update, ([FromBody] FolderDto folderDto, CancellationToken ct) =>_folderRequestHandler.UpdateFolder(folderDto,ct));
-         app.MapDelete(MNotesRoutes.Endpoints.FolderEndpoints.Delete+"/{id}", _folderRequestHandler.DeleteFolder);
+        app.MapGet(MNotesRoutes.Endpoints.FolderEndpoints.GetAll, _folderRequestHandler.GetAllFolders);
+        app.MapPost(MNotesRoutes.Endpoints.FolderEndpoints.Create, ([FromBody] CreateFolderDto createFolderDto, CancellationToken ct) => _folderRequestHandler.CreateFolder(createFolderDto, ct));
+        app.MapPut(MNotesRoutes.Endpoints.FolderEndpoints.Update, ([FromBody] FolderDto folderDto, CancellationToken ct) => _folderRequestHandler.UpdateFolder(folderDto, ct));
+        app.MapDelete(MNotesRoutes.Endpoints.FolderEndpoints.Delete + "/{id}", _folderRequestHandler.DeleteFolder);
     }
 }

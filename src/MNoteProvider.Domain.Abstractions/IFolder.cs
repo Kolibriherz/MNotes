@@ -10,5 +10,5 @@ public interface IFolder : IBaseDomainObject
     /// <summary>The parent folder. Equals the own id only for the root folder.</summary>
     Guid ParentId { get; set; }
     /// <summary>The date the folder was created. Immutable after insert.</summary>
-    DateTime  CreationDate { get; set; }
+    DateTime CreationDate { get; set; }
 }

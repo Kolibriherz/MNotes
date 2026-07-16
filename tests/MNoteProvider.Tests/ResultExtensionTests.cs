@@ -7,7 +7,7 @@ namespace MNoteProvider.Tests;
 [TestFixture]
 public class ResultExtensionTests
 {
-   
+
     [Test]
     public void ToIResulut_Returns400_WhenFailTypeIsBadRequest()
     {

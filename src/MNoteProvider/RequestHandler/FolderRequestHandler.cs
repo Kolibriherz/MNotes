@@ -32,7 +32,7 @@ public interface IFolderRequestHandler
     /// <c>201 Created</c> with the identifier of the created folder, or an error
     /// response derived from the failure returned by the business layer.
     /// </returns>
-    Task<IResult> CreateFolder(CreateFolderDto createFolderDto,CancellationToken ct = default);
+    Task<IResult> CreateFolder(CreateFolderDto createFolderDto, CancellationToken ct = default);
 
     /// <summary>
     /// Updates an existing folder.
@@ -73,24 +73,24 @@ public class FolderRequestHandler : IFolderRequestHandler
     public async Task<IResult> GetAllFolders(CancellationToken ct = default)
     {
         var mFoldersResult = await _folderProvider.GetAllFolders(ct).ConfigureAwait(false);
-        return   mFoldersResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
+        return mFoldersResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
     }
     /// <inheritdoc/>
     public async Task<IResult> CreateFolder(CreateFolderDto createFolderDto, CancellationToken ct = default)
     {
-        var mFoldersResult = await _folderProvider.CreateFolder(createFolderDto,ct).ConfigureAwait(false);
+        var mFoldersResult = await _folderProvider.CreateFolder(createFolderDto, ct).ConfigureAwait(false);
         return mFoldersResult.Match(id => Results.Created((string?)null, id), fail => fail.ToIResult());
     }
     /// <inheritdoc/>
     public async Task<IResult> UpdateFolder(FolderDto folderDto, CancellationToken ct = default)
     {
-        var mFoldersResult = await _folderProvider.UpdateFolder(folderDto,ct).ConfigureAwait(false);
-        return   mFoldersResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
+        var mFoldersResult = await _folderProvider.UpdateFolder(folderDto, ct).ConfigureAwait(false);
+        return mFoldersResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
     }
     /// <inheritdoc/>
     public async Task<IResult> DeleteFolder(Guid id, CancellationToken ct = default)
     {
         var mFoldersResult = await _folderProvider.DeleteFolder(id, ct).ConfigureAwait(false);
-        return   mFoldersResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
+        return mFoldersResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
     }
 }

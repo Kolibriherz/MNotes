@@ -22,7 +22,7 @@ public interface ICommentRequestHandler
     /// <c>200 OK</c> with the list of comments, or an error response derived from the failure
     /// returned by the business layer. A note without comments yields an empty list, not a failure.
     /// </returns>
-    Task<IResult> GetAllCommentsByNote(Guid id,CancellationToken ct = default);
+    Task<IResult> GetAllCommentsByNote(Guid id, CancellationToken ct = default);
 
     /// <summary>
     /// Creates a new comment on a note.
@@ -33,7 +33,7 @@ public interface ICommentRequestHandler
     /// <c>201 Created</c> with the identifier of the created comment, or an error
     /// response derived from the failure returned by the business layer.
     /// </returns>
-    Task<IResult> CreateComment(CreateCommentDto createCommentDto,CancellationToken ct = default);
+    Task<IResult> CreateComment(CreateCommentDto createCommentDto, CancellationToken ct = default);
 
     /// <summary>
     /// Updates an existing comment.
@@ -81,19 +81,19 @@ public class CommentRequestHandler : ICommentRequestHandler
     /// <inheritdoc/>
     public async Task<IResult> CreateComment(CreateCommentDto createCommentDto, CancellationToken ct = default)
     {
-        var mCommentsResult = await _commentProvider.CreateComment(createCommentDto,ct).ConfigureAwait(false);
-        return   mCommentsResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
+        var mCommentsResult = await _commentProvider.CreateComment(createCommentDto, ct).ConfigureAwait(false);
+        return mCommentsResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
     }
     /// <inheritdoc/>
     public async Task<IResult> UpdateComment(CommentDto commentDto, CancellationToken ct = default)
     {
-        var mCommentsResult = await _commentProvider.UpdateComment(commentDto,ct).ConfigureAwait(false);
-        return   mCommentsResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
+        var mCommentsResult = await _commentProvider.UpdateComment(commentDto, ct).ConfigureAwait(false);
+        return mCommentsResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
     }
     /// <inheritdoc/>
     public async Task<IResult> DeleteComment(Guid id, CancellationToken ct = default)
     {
         var mCommentsResult = await _commentProvider.DeleteComment(id, ct).ConfigureAwait(false);
-        return   mCommentsResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
+        return mCommentsResult.Match(l => Results.Ok(l), fail => fail.ToIResult());
     }
 }

@@ -10,7 +10,7 @@ public class MNotesRoutesTest
     [TestCase(MNotesRoutes.Endpoints.TagEndpoints.GetAll, "https://example.org/api/tag/getall")]
     [TestCase(MNotesRoutes.Endpoints.NoteTagAssignmentEndpoints.GetAll, "https://example.org/api/notetagassignment/getall")]
     [TestCase(MNotesRoutes.Hubs.Name, "https://example.org/api/hubs")]
-    public void RouteCombination_WithTrailingSlash_ProducesCorrectUrl( string route, string expected)
+    public void RouteCombination_WithTrailingSlash_ProducesCorrectUrl(string route, string expected)
     {
         // Arrange
         var baseUri = new Uri(BaseUrl);

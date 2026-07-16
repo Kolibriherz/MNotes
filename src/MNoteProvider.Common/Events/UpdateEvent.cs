@@ -7,18 +7,18 @@ namespace MNoteProvider.Common.Events;
 /// A note update event carrying the state of a note before and after a change.
 /// Persisted to the event stream and broadcast to subscribers.
 /// </summary>
-public class UpdateEvent : IUpdateEvent<NoteDto> , IBaseEvent
+public class UpdateEvent : IUpdateEvent<NoteDto>, IBaseEvent
 {
     /// <inheritdoc/>
-    public Guid Id { get;   set; }
+    public Guid Id { get; set; }
     /// <inheritdoc/>
-    public Guid OwnerId { get;  set; }
+    public Guid OwnerId { get; set; }
     /// <inheritdoc/>
-    public DateTime PublishDate { get;  set; }
+    public DateTime PublishDate { get; set; }
     /// <inheritdoc/>
-    public NoteDto OldNote { get;  set; }
+    public NoteDto OldNote { get; set; }
     /// <inheritdoc/>
-    public NoteDto NewNote { get;  set; }
+    public NoteDto NewNote { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UpdateEvent"/> class. The owner is

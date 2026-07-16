@@ -12,7 +12,7 @@ namespace MNoteProvider.Endpoints.EndpointDefinitions;
 /// <see cref="MNotesRoutes"/>, so that server and client refer to the same constant rather than
 /// to two copies of the same string.
 /// </remarks>
-public class IsAvailableEndpointDefinition :IEndpointDefinition
+public class IsAvailableEndpointDefinition : IEndpointDefinition
 {
     private readonly IIsAvailableRequestHandler _isAvailableRequestHandler;
     /// <summary>

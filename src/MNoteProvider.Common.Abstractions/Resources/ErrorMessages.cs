@@ -22,7 +22,7 @@ public static class ErrorMessages
     /// <summary>Builds the message for a failed database operation.</summary>
     /// <param name="action">The attempted action, e.g. <c>save</c> or <c>update</c>.</param>
     /// <param name="what">The affected entity, e.g. <c>note</c>.</param>
-    public static string DatabaseFail(string action, string what) => $"Failed to {action } the {what} in the database.";
+    public static string DatabaseFail(string action, string what) => $"Failed to {action} the {what} in the database.";
 
     /// <summary>Builds the message for a lookup of an id that does not exist.</summary>
     /// <param name="id">The identifier that was not found.</param>
@@ -45,7 +45,7 @@ public static class ErrorMessages
     /// <summary>Builds the message for a note-tag assignment that does not exist.</summary>
     /// <param name="noteId">The note side of the missing assignment.</param>
     /// <param name="tagId">The tag side of the missing assignment.</param>
-    public static string AssignmentDoesNotExist(Guid noteId, Guid tagId)=> $"No assignment exists between note [{noteId}] and tag [{tagId}].";
+    public static string AssignmentDoesNotExist(Guid noteId, Guid tagId) => $"No assignment exists between note [{noteId}] and tag [{tagId}].";
 
     /// <summary>
     /// Returns an error indicating that an entry of the specified type already exists.

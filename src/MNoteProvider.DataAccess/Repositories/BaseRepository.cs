@@ -242,7 +242,7 @@ public abstract class BaseRepository<TEntity, TInterface> : IBaseRepository<TInt
             new CommandDefinition
             (
                 DeleteSql,
-                new {id },
+                new { id },
                 cancellationToken: ct
             )
         ).ConfigureAwait(false);

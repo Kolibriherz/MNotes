@@ -28,8 +28,8 @@ public class TagEndpointDefinition : IEndpointDefinition
     public void AddEndpoints(WebApplication app)
     {
         app.MapGet(MNotesRoutes.Endpoints.TagEndpoints.GetAll, _tagRequestHandler.GetAllTags);
-        app.MapPost(MNotesRoutes.Endpoints.TagEndpoints.Create,([FromBody] string name, CancellationToken ct) => _tagRequestHandler.CreateTag(name,ct));
-        app.MapDelete(MNotesRoutes.Endpoints.TagEndpoints.Delete+"/{id}", _tagRequestHandler.DeleteTag);
+        app.MapPost(MNotesRoutes.Endpoints.TagEndpoints.Create, ([FromBody] string name, CancellationToken ct) => _tagRequestHandler.CreateTag(name, ct));
+        app.MapDelete(MNotesRoutes.Endpoints.TagEndpoints.Delete + "/{id}", _tagRequestHandler.DeleteTag);
     }
-  
+
 }
