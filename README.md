@@ -8,8 +8,15 @@ append-only event stream, and real-time change notifications over SignalR.
 > a real-time hub, and a typed .NET client library. There is **no frontend yet**; a client UI
 > consuming `MNoteProvider.ClientService` is the next milestone. 
 
-> **Security:** Authentication and authorization are not implemented yet.
-> The current version is intended for local development or use in a trusted environment.
+> **⚠️ Security Warning**
+> 
+> Authentication and authorization are **not implemented yet**. The MNotes provider currently has 
+> **no production-ready authentication and authorization boundary**. 
+> 
+> **Do not expose it to untrusted networks or the public internet.** 
+> 
+> - HTTP endpoints and SignalR hub are directly accessible without authentication
+> - The current version is intended for **local development only** or use in a **fully trusted environment**
 
 ## Architecture
 
@@ -102,6 +109,7 @@ Unit tests run without a live database; coverage is still growing.
 
 - Web frontend consuming the client library
 - Broader test coverage (business layer, API integration tests)
+- Authentication and authorization (API + SignalR protection)
 - Persist note updates and their history events atomically in a shared database transaction
 - Store create and delete events in the event stream (currently updates only)
 - Add global exception handling for consistent API error responses
