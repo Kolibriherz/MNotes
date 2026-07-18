@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using MNoteProvider.ClientService.Abstractions;
 
 namespace MNoteProvider.ClientService.SignalRClient;
 
@@ -8,7 +7,7 @@ namespace MNoteProvider.ClientService.SignalRClient;
 /// <param name="hubCon">The hub connection to start and stop.</param>
 /// <param name="relay">The relay subscribed to hub events before the connection starts.</param>
 /// /// <param name="logger">The logger used to record connection lifecycle events.</param>
-internal sealed class NoteHubConnectionStarter(NoteHubCon hubCon, INoteEventRelay relay, ILogger<NoteHubConnectionStarter> logger) : IHostedService
+internal sealed class NoteHubConnectionStarter(NoteHubCon hubCon, NoteEventRelay relay, ILogger<NoteHubConnectionStarter> logger) : IHostedService
 {
     /// <summary>
     /// Subscribes to note events and starts the hub connection.
@@ -45,5 +44,5 @@ internal sealed class NoteHubConnectionStarter(NoteHubCon hubCon, INoteEventRela
 
         logger.LogInformation("Note hub connection stopped.");
     }
-   
+
 }

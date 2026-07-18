@@ -12,6 +12,10 @@
       <ProjectReference Include="..\MNoteProvider.ClientService.Abstractions\MNoteProvider.ClientService.Abstractions.csproj" />
     </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="MNoteProvider.ClientService.Tests" />
+  </ItemGroup>
+
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.10" />
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10" />

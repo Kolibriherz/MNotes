@@ -12,7 +12,7 @@ using OneOf;
 namespace MNoteProvider.ClientService;
 
 /// <inheritdoc/>
-public class MNoteClientService : IMNoteClientService
+internal sealed class MNoteClientService : IMNoteClientService
 {
     private readonly HttpClient _httpClient;
     /// <summary>

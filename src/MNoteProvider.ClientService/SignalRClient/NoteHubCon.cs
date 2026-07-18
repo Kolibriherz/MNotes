@@ -4,14 +4,14 @@ using MNoteProvider.Common.DTOs;
 
 namespace MNoteProvider.ClientService.SignalRClient;
 /// <summary>Provides configuration options for the note hub connection.</summary>
-public sealed class NoteHubConOptions
+internal sealed class NoteHubConOptions
 {
     /// <summary>Gets the SignalR hub address used for note notifications.</summary>
     public required Uri HubAddress { get; init; }
 }
 
 /// <summary>Manages the SignalR connection for receiving note events.</summary>
-public sealed class NoteHubCon : IAsyncDisposable
+internal sealed class NoteHubCon : IAsyncDisposable
 {
     private readonly HubConnection _hubConnection;
 

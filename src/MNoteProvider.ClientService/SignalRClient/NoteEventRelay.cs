@@ -3,7 +3,7 @@ using MNoteProvider.Common.DTOs;
 namespace MNoteProvider.ClientService.SignalRClient;
 
 /// <summary>Relays note hub events as client-side note notifications.</summary>
-public sealed class NoteEventRelay : INoteEventRelay, IDisposable
+internal sealed class NoteEventRelay : INoteEventRelay, IDisposable
 {
     private readonly NoteHubCon _hubCon;
 
@@ -20,7 +20,7 @@ public sealed class NoteEventRelay : INoteEventRelay, IDisposable
     /// <param name="hubCon">The note hub connection that provides note events.</param>
     public NoteEventRelay(NoteHubCon hubCon) => _hubCon = hubCon;
 
-    /// <inheritdoc/>
+    /// <summary>Subscribes to note events from the hub connection.</summary>
     public void Subscribe()
     {
         _hubCon.NoteCreated += OnNoteCreated;
