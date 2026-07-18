@@ -14,6 +14,4 @@ public interface INoteEventRelay
     /// <summary>Occurs when a note has been deleted.</summary>
     event Action<Guid>? NoteDeletedNotification;
 
-    /// <summary>Subscribes to note events from the hub connection.</summary>
-    void Subscribe();
 }

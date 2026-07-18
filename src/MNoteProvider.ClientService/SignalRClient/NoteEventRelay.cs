@@ -21,7 +21,7 @@ internal sealed class NoteEventRelay : INoteEventRelay, IDisposable
     public NoteEventRelay(NoteHubCon hubCon) => _hubCon = hubCon;
 
     /// <summary>Subscribes to note events from the hub connection.</summary>
-    public void Subscribe()
+    internal void Subscribe()
     {
         _hubCon.NoteCreated += OnNoteCreated;
         _hubCon.NoteUpdated += OnNoteUpdated;
