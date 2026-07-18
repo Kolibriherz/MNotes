@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using MNoteProvider.Common;
+using MNoteProvider.Common.Abstractions;
 using MNoteProvider.Common.Abstractions.Enums;
 
 namespace MNoteProvider.ClientService.Tests;

@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using MNoteProvider.ClientService.Abstractions;
 using MNoteProvider.Common;
+using MNoteProvider.Common.Abstractions;
 using MNoteProvider.Common.Abstractions.DTOs;
 using MNoteProvider.Common.Abstractions.Enums;
 using MNoteProvider.Common.Abstractions.Events;

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using MNoteProvider.ClientService.Abstractions;
 
 namespace MNoteProvider.ClientService.SignalRClient;
@@ -6,7 +7,8 @@ namespace MNoteProvider.ClientService.SignalRClient;
 /// <summary>Starts and stops the note hub connection for the hosted application.</summary>
 /// <param name="hubCon">The hub connection to start and stop.</param>
 /// <param name="relay">The relay subscribed to hub events before the connection starts.</param>
-internal sealed class NoteHubConnectionStarter(NoteHubCon hubCon, INoteEventRelay relay) : IHostedService
+/// /// <param name="logger">The logger used to record connection lifecycle events.</param>
+internal sealed class NoteHubConnectionStarter(NoteHubCon hubCon, INoteEventRelay relay, ILogger<NoteHubConnectionStarter> logger) : IHostedService
 {
     /// <summary>
     /// Subscribes to note events and starts the hub connection.
@@ -19,13 +21,29 @@ internal sealed class NoteHubConnectionStarter(NoteHubCon hubCon, INoteEventRela
     /// </remarks>
     public async Task StartAsync(CancellationToken ct)
     {
+        logger.LogInformation("Starting note hub connection.");
+
         relay.Subscribe();
+
+        logger.LogDebug("Note event relay subscribed to hub events.");
 
         await hubCon
             .EnsureStartedAsync(ct)
             .ConfigureAwait(false);
+
+        logger.LogInformation("Note hub connection started.");
     }
     /// <summary>Stops the note hub connection.</summary>
     /// <param name="ct">An optional token used to cancel the operation.</param>
-    public Task StopAsync(CancellationToken ct) => hubCon.StopAsync(ct);
+    public async Task StopAsync(CancellationToken ct)
+    {
+        logger.LogInformation("Stopping note hub connection.");
+
+        await hubCon
+            .StopAsync(ct)
+            .ConfigureAwait(false);
+
+        logger.LogInformation("Note hub connection stopped.");
+    }
+   
 }

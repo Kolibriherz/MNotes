@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Http;
-using MNoteProvider.Common;
+using MNoteProvider.Common.Abstractions;
 
 
 namespace MNoteProvider.Tests;

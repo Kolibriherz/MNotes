@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\MNoteProvider.Common\MNoteProvider.Common.csproj" />
     <ProjectReference Include="..\..\src\MNoteProvider\MNoteProvider.csproj" />
   </ItemGroup>
 

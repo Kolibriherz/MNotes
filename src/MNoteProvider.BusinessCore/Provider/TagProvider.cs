@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 using MNoteProvider.BusinessCore.Mapping;
-using MNoteProvider.Common;
+using MNoteProvider.Common.Abstractions;
 using MNoteProvider.Common.Abstractions.Enums;
 using MNoteProvider.Common.Abstractions.Resources;
 using MNoteProvider.Common.DTOs;

@@ -1,4 +1,4 @@
-using MNoteProvider.Common;
+using MNoteProvider.Common.Abstractions;
 using MNoteProvider.Common.Abstractions.DTOs;
 using MNoteProvider.Common.Abstractions.Events;
 using MNoteProvider.Common.DTOs;

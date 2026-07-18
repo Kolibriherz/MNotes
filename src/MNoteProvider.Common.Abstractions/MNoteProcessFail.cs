@@ -1,6 +1,6 @@
 using MNoteProvider.Common.Abstractions.Enums;
 
-namespace MNoteProvider.Common;
+namespace MNoteProvider.Common.Abstractions;
 /// <summary>
 /// Represents a failure that occurred while processing an MNotes operation.
 /// </summary>
