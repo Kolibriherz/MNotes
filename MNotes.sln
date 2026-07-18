@@ -44,6 +44,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MNoteProvider.BusinessCore.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MNoteProvider.Common.Tests", "tests\MNoteProvider.Common.Tests\MNoteProvider.Common.Tests.csproj", "{6B5910BD-4A5F-4BA1-91CE-23207BDB3307}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MNoteProvider.ClientService.Tests", "tests\MNoteProvider.ClientService.Tests\MNoteProvider.ClientService.Tests.csproj", "{85BB0227-6E51-494C-B918-805E707BEA3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,6 +104,10 @@ Global
 		{6B5910BD-4A5F-4BA1-91CE-23207BDB3307}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B5910BD-4A5F-4BA1-91CE-23207BDB3307}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B5910BD-4A5F-4BA1-91CE-23207BDB3307}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85BB0227-6E51-494C-B918-805E707BEA3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85BB0227-6E51-494C-B918-805E707BEA3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85BB0227-6E51-494C-B918-805E707BEA3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85BB0227-6E51-494C-B918-805E707BEA3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -120,6 +126,7 @@ Global
 		{26A70076-DC2A-4E4C-B411-81B360367729} = {DE371ADF-B2FE-4F66-956B-12814A288D2A}
 		{A1F5372D-868E-4112-B18D-0ECD7DD09072} = {DE371ADF-B2FE-4F66-956B-12814A288D2A}
 		{6B5910BD-4A5F-4BA1-91CE-23207BDB3307} = {DE371ADF-B2FE-4F66-956B-12814A288D2A}
+		{85BB0227-6E51-494C-B918-805E707BEA3D} = {DE371ADF-B2FE-4F66-956B-12814A288D2A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9267A44B-B91C-4000-87EC-AFEE28C165BC}

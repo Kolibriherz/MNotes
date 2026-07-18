@@ -1,6 +1,7 @@
 namespace MNoteProvider.Common.Tests;
 
-public class MNotesRoutesTest
+[TestFixture]
+public class MNotesRoutesTests
 {
     private const string BaseUrl = "https://example.org/api/";
 
