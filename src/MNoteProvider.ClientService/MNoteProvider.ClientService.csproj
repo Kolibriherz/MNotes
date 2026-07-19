@@ -8,7 +8,17 @@
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     </PropertyGroup>
 
-    <ItemGroup>
+  <PropertyGroup>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="README.md" Pack="true" PackagePath="" />
+
+    <None Include="../../docs/nuget/THIRD-PARTY-NOTICES.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
       <ProjectReference Include="..\MNoteProvider.ClientService.Abstractions\MNoteProvider.ClientService.Abstractions.csproj" />
     </ItemGroup>
 
@@ -18,7 +28,7 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.10" />
-      <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
+      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.10" />
       <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.10" />
     </ItemGroup>
 

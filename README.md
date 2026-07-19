@@ -30,8 +30,8 @@ graph TD
     DA["MNoteProvider.DataAccess<br/>Dapper repositories, append-only event store"]
     DOM["MNoteProvider.Domain<br/>persistence entities"]
     DOMA["MNoteProvider.Domain.Abstractions<br/>entity contracts"]
-    C["MNoteProvider.Common<br/>DTOs, route constants, failure model"]
-    CA["MNoteProvider.Common.Abstractions<br/>DTO and event contracts"]
+    C["MNoteProvider.Common<br/>DTO implementations, route constants"]
+    CA["MNoteProvider.Common.Abstractions<br/>DTO, event, and failure contracts"]
     CS["MNoteProvider.ClientService<br/>typed HTTP + SignalR client"]
     CSA["MNoteProvider.ClientService.Abstractions<br/>client contracts"]
 
@@ -44,7 +44,7 @@ graph TD
     C --> CA
     CS --> CSA
     CSA --> C
-    CS -. "HTTP / SignalR" .-> Host
+    CS -. "runtime HTTP / SignalR" .-> Host
 ```
 
 Design decisions worth noting:

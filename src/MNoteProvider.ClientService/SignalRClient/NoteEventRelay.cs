@@ -6,6 +6,7 @@ namespace MNoteProvider.ClientService.SignalRClient;
 internal sealed class NoteEventRelay : INoteEventRelay, IDisposable
 {
     private readonly NoteHubCon _hubCon;
+    private bool _isSubscribed;
 
     /// <inheritdoc/>
     public event Action<NoteDto>? NoteCreatedNotification;
@@ -23,9 +24,14 @@ internal sealed class NoteEventRelay : INoteEventRelay, IDisposable
     /// <summary>Subscribes to note events from the hub connection.</summary>
     internal void Subscribe()
     {
+        if (_isSubscribed)
+            return;
+
         _hubCon.NoteCreated += OnNoteCreated;
         _hubCon.NoteUpdated += OnNoteUpdated;
         _hubCon.NoteDeleted += OnNoteDeleted;
+
+        _isSubscribed = true;
     }
 
     private void OnNoteCreated(NoteDto dto) => NoteCreatedNotification?.Invoke(dto);

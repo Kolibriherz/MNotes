@@ -6,7 +6,7 @@ namespace MNoteProvider.ClientService.SignalRClient;
 /// <summary>Starts and stops the note hub connection for the hosted application.</summary>
 /// <param name="hubCon">The hub connection to start and stop.</param>
 /// <param name="relay">The relay subscribed to hub events before the connection starts.</param>
-/// /// <param name="logger">The logger used to record connection lifecycle events.</param>
+/// <param name="logger">The logger used to record connection lifecycle events.</param>
 internal sealed class NoteHubConnectionStarter(NoteHubCon hubCon, NoteEventRelay relay, ILogger<NoteHubConnectionStarter> logger) : IHostedService
 {
     /// <summary>
