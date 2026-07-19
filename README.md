@@ -20,8 +20,9 @@ append-only event stream, and real-time change notifications over SignalR.
 
 ## Architecture
 
-Strictly layered; dependencies point in one direction only. Contracts live in separate
-`*.Abstractions` assemblies, so the compiler, rather than convention, enforces the dependency rule.
+Strictly layered; dependencies point in one direction only. Shared contracts are concentrated in `*.Abstractions`, while concrete types remain in their respective layers.
+
+Solid arrows show the acyclic `ProjectReference` graph; the dashed arrow shows runtime HTTP/SignalR communication.
 
 ```mermaid
 graph TD
@@ -68,12 +69,12 @@ Design decisions worth noting:
 |---|---|---|
 | [Dapper](https://github.com/DapperLib/Dapper) | DataAccess | Micro-ORM; SQL stays explicit and under full control |
 | [Npgsql](https://www.npgsql.org/) | DataAccess | PostgreSQL ADO.NET driver |
-| [OneOf](https://github.com/mcintyre321/OneOf) | all layers | Discriminated unions for explicit success/failure results |
+| [OneOf](https://github.com/mcintyre321/OneOf) | Host, BusinessCore, DataAccess, ClientService | Explicit success/failure results |
 | ASP.NET Core SignalR (+ client) | Host, ClientService | Real-time note change notifications |
-| `Microsoft.Extensions.*` | Common, DataAccess, ClientService | Configuration, DI, and HTTP client factory abstractions |
+| `Microsoft.Extensions.*` | DataAccess, ClientService | Configuration, DI, and HTTP client factory abstractions |
 | NUnit, coverlet | tests | Test framework, assertions, and coverage |
 
-No further runtime dependencies—the goal is a small, fully explainable dependency graph.
+No further direct runtime package dependencies are declared.
 
 ## Getting started
 

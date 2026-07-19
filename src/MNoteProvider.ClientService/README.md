@@ -19,13 +19,19 @@ dependency-injection registration.
 ## Install
 
 ```bash
-dotnet package add MNoteProvider.ClientService
+dotnet package add MNoteProvider.ClientService --prerelease
 ```
 
 ## Usage
 
 ```csharp
-services.AddMNoteClientService(new Uri("https://localhost:6015/"));
+using Microsoft.Extensions.Hosting;
+using MNoteProvider.ClientService;
+
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.Services.AddMNoteClientService(
+    new Uri("https://localhost:6015/"));
 ```
 
 Registration takes the base address of the provider; route constants are
@@ -33,10 +39,10 @@ combined relative to it. Implementation types are internal — consumers
 depend on the interfaces and the registration method only.
 
 Inject `IMNoteClientService` for HTTP operations and `INoteEventRelay` for
-real-time note notifications. The SignalR connection is started by a hosted
-service during application startup.
+real-time note notifications. The SignalR connection is started when the containing .NET Generic Host
+starts.
 
 ## License
 
-MIT — see `LICENSE.txt`. Third-party components are listed in
+MNoteProvider packages are licensed under the MIT License. Third-party components are listed in
 `THIRD-PARTY-NOTICES.md`.

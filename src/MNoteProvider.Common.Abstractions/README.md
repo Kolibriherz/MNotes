@@ -1,7 +1,7 @@
 # MNoteProvider.Common.Abstractions
 
-Transport-neutral contracts for the MNoteProvider client family: DTO
-interfaces, domain event contracts, the failure model, and shared error
+Transport-neutral shared contracts for the MNoteProvider package family:
+DTO interfaces, event contracts, the failure model, and shared error
 messages.
 
 > **Pre-release.** Public APIs may change between pre-release versions.
@@ -12,7 +12,7 @@ messages.
 ## Install
 
 ```bash
-dotnet package add MNoteProvider.Common.Abstractions
+dotnet package add MNoteProvider.Common.Abstractions --prerelease
 ```
 
 ## Contents
@@ -26,5 +26,5 @@ this package in as a dependency.
 
 ## License
 
-MIT — see `LICENSE.txt`. Third-party components are listed in
+MNoteProvider packages are licensed under the MIT License. Third-party components are listed in
 `THIRD-PARTY-NOTICES.md`.

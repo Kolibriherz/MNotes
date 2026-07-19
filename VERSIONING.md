@@ -1,6 +1,6 @@
 # Versioning
 
-MNotes follows Semantic Versioning.
+MNotes follows Semantic Versioning 2.0.0.
 
 ## Package family
 
@@ -25,21 +25,26 @@ Notable changes are recorded in `CHANGELOG.md`.
 
 Pre-release versions follow this pattern:
 
-```
+```text
 0.1.0-alpha.42.d20260716.t0905
-│     │     │  │          └── commit time (UTC, hour and minute)
-│     │     │  └───────────── commit date (UTC)
-│     │     └──────────────── build run number
+│     │     │  │          └── commit time UTC
+│     │     │  └───────────── commit date UTC
+│     │     └──────────────── workflow run number
 │     └────────────────────── maturity label
 └──────────────────────────── semantic version core
 ```
 
 The version core and the maturity label are set deliberately by the
-maintainer. Run number and commit timestamp are added by the build, so
-every release is uniquely identifiable and traceable to a single commit.
+maintainer.
 
-From 1.0.0 on, the timestamp moves to build metadata (`+sha.<commit>`),
-because package feeds ignore build metadata when comparing versions.
+The package release workflow adds its run number and the triggering
+commit timestamp in UTC. Each new run of that workflow produces a
+distinct package version. Re-running the same workflow run intentionally
+reproduces the same version.
+
+From `1.0.0` onward, traceability information moves to build metadata,
+for example `+sha.<commit>`. NuGet removes build metadata during version
+normalization, so it does not create a separate package version.
 
 ## From 1.0.0
 
@@ -50,5 +55,8 @@ because package feeds ignore build metadata when comparing versions.
 ## Immutability
 
 A published version is never reused.
+
+A workflow run may be re-run only while no package with that version
+has been published.
 
 A defective release is unlisted and replaced with a new version.

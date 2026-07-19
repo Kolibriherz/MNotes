@@ -11,7 +11,7 @@ Client-facing contracts for the MNoteProvider API client:
 ## Install
 
 ```bash
-dotnet package add MNoteProvider.ClientService.Abstractions
+dotnet package add MNoteProvider.ClientService.Abstractions --prerelease
 ```
 
 ## Contents
@@ -23,11 +23,10 @@ dotnet package add MNoteProvider.ClientService.Abstractions
 - `INoteEventRelay` — client-side notifications for note creation, updates
   and deletion.
 
-Install this package to depend on the contracts alone, for example in a
-view model or test project. The implementation lives in
-`MNoteProvider.ClientService`.
+Install this package to depend on the public client contracts without
+referencing the concrete client implementation.
 
 ## License
 
-MIT — see `LICENSE.txt`. Third-party components are listed in
+MNoteProvider packages are licensed under the MIT License. Third-party components are listed in
 `THIRD-PARTY-NOTICES.md`.

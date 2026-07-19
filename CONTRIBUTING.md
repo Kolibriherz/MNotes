@@ -19,8 +19,8 @@ dotnet build MNotes.sln --configuration Release --no-restore
 dotnet test MNotes.sln --configuration Release --no-build
 ```
 
-Projects build in dependency order: contracts before implementations,
-client packages before host and data access, test projects last.
+MSBuild determines project build order from the declared
+`ProjectReference` graph.
 
 ## Changes
 
@@ -28,8 +28,9 @@ client packages before host and data access, test projects last.
 - Use short English commit messages with a conventional prefix
   (`feat`, `fix`, `refactor`, `test`, `docs`, `build`, `ci`, `style`, `chore`).
 - Public API changes require a `CHANGELOG.md` entry.
-- New dependencies require a license check and an entry in
-  `THIRD-PARTY-NOTICES.md`.
+- New dependencies require a license check. Update
+`THIRD-PARTY-NOTICES.md` and, for public package runtime dependencies,
+`docs/nuget/THIRD-PARTY-NOTICES.md`.
 
 ## Not accepted
 

@@ -24,6 +24,5 @@ Each component remains subject to its own license.
 This summary covers direct dependencies declared by this repository.
 Transitive dependencies remain subject to their respective license terms.
 
-MNotes itself is licensed under the MIT License; see `LICENSE.txt`.
-
-MNoteProvider packages are licensed under the MIT License; see `LICENSE.txt`.
+MNotes and its published packages are licensed under the MIT License;
+see `LICENSE.txt`.
