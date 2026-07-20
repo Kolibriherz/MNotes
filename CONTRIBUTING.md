@@ -5,7 +5,7 @@ the expected workflow for changes to this repository.
 
 ## Requirements
 
-- .NET SDK 10.0.302
+- The .NET SDK version specified in `global.json`
 - PostgreSQL 14 or later for running the provider locally
 
 ## Local verification

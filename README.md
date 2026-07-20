@@ -20,7 +20,8 @@ append-only event stream, and real-time change notifications over SignalR.
 
 ## Architecture
 
-Strictly layered; dependencies point in one direction only. Shared contracts are concentrated in `*.Abstractions`, while concrete types remain in their respective layers.
+Strictly layered; dependencies point in one direction only. Shared contracts are concentrated in `*.Abstractions`, while concrete
+implementations remain in their respective layers.
 
 Solid arrows show the acyclic `ProjectReference` graph; the dashed arrow shows runtime HTTP/SignalR communication.
 
@@ -78,7 +79,8 @@ No further direct runtime package dependencies are declared.
 
 ## Getting started
 
-Requirements: the [.NET 10 SDK](https://dotnet.microsoft.com/download) and PostgreSQL 14+.
+Requirements: the .NET SDK version specified in `global.json` and
+PostgreSQL 14+.
 
 ```bash
 # 1. Create and initialize the database (idempotent; reset.sql wipes it first if needed)

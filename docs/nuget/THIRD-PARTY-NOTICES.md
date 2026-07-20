@@ -11,4 +11,6 @@ third-party components. Each component remains subject to its own license.
 
 Transitive dependencies remain subject to their respective license terms.
 
-MNoteProvider packages are licensed under the MIT License; see `LICENSE.txt`.
+MNotes and its published packages are licensed under the MIT License;
+see `LICENSE.txt`.
+

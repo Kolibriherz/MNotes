@@ -42,9 +42,9 @@ commit timestamp in UTC. Each new run of that workflow produces a
 distinct package version. Re-running the same workflow run intentionally
 reproduces the same version.
 
-From `1.0.0` onward, traceability information moves to build metadata,
-for example `+sha.<commit>`. NuGet removes build metadata during version
-normalization, so it does not create a separate package version.
+From `1.0.0` onward, package versions use the SemVer core without
+workflow-specific suffixes. Source traceability is recorded through NuGet
+repository metadata, including `RepositoryCommit`.
 
 ## From 1.0.0
 
