@@ -1,0 +1,33 @@
+<Project>
+  <PropertyGroup Condition="'$(IsTestProject)' != 'true'">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsPackable)' == 'true'">
+    <Authors>M. Albert</Authors>
+    <Copyright>Copyright (c) 2026 M. Albert</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://github.com/Kolibriherz/MNotes</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(IsPackable)' == 'true'">
+    <None Include="$(MSBuildThisFileDirectory)LICENSE.txt" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)docs/nuget/THIRD-PARTY-NOTICES.md" Pack="true" PackagePath="" />
+    <None Update="README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+  <Target Name="ValidateMNotePackageMetadata" BeforeTargets="Pack"
+          Condition="'$(IsPackable)' == 'true'">
+    <Error Condition="'$(PackageId)' == '' OR '$(Title)' == '' OR '$(Description)' == '' OR '$(PackageTags)' == ''"
+           Text="Package metadata incomplete for $(MSBuildProjectName): PackageId, Title, Description and PackageTags are required." />
+    <Error Condition="'$(Authors)' != 'M. Albert'"
+           Text="Unexpected Authors value: $(Authors)" />
+    <Error Condition="'$(ContinuousIntegrationBuild)' == 'true' AND ('$(VersionSuffix)' == '' OR '$(VersionSuffix)' == '$(MNotePrereleaseLabel)')"
+           Text="CI must provide a deterministic VersionSuffix (run number + commit timestamp)." />
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)/README.md')"
+           Text="Package README missing for $(MSBuildProjectName)." />
+    <Error Condition="!Exists('$(MSBuildThisFileDirectory)LICENSE.txt') OR !Exists('$(MSBuildThisFileDirectory)docs/nuget/THIRD-PARTY-NOTICES.md')"
+           Text="Shared package legal notices are missing." />
+  </Target>
+</Project>

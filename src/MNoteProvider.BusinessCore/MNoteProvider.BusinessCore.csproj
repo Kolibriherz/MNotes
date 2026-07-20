@@ -1,14 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-      <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-      <GenerateDocumentationFile>true</GenerateDocumentationFile>
-      <IsPackable>false</IsPackable>
-    </PropertyGroup>
-
     <ItemGroup>
       <ProjectReference Include="..\MNoteProvider.DataAccess\MNoteProvider.DataAccess.csproj" />
     </ItemGroup>
