@@ -3,7 +3,6 @@
 	<PropertyGroup>
 		<IsPackable>true</IsPackable>
 		<PackageId>MNoteProvider.ClientService</PackageId>
-		<Title>MNoteProvider.ClientService</Title>
 		<Description>HTTP client implementation, dependency-injection registration, and SignalR note notifications for MNoteProvider consumers.</Description>
 		<PackageTags>mnotes;notes;client;signalr;http;dotnet</PackageTags>
 	</PropertyGroup>

@@ -3,7 +3,6 @@
 	<PropertyGroup>
 		<IsPackable>true</IsPackable>
 		<PackageId>MNoteProvider.Common</PackageId>
-		<Title>MNoteProvider.Common</Title>
 		<Description>Shared transport models, event implementations, and route definitions for the MNoteProvider package family.</Description>
 		<PackageTags>mnotes;notes;dto;routes;dotnet</PackageTags>
 	</PropertyGroup>

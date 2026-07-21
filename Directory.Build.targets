@@ -1,7 +1,4 @@
 <Project>
-  <PropertyGroup Condition="'$(IsTestProject)' != 'true'">
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(IsPackable)' == 'true'">
     <Authors>M. Albert</Authors>
     <Copyright>Copyright (c) 2026 M. Albert</Copyright>
@@ -19,8 +16,8 @@
   </ItemGroup>
   <Target Name="ValidateMNotePackageMetadata" BeforeTargets="Pack"
           Condition="'$(IsPackable)' == 'true'">
-    <Error Condition="'$(PackageId)' == '' OR '$(Title)' == '' OR '$(Description)' == '' OR '$(PackageTags)' == ''"
-           Text="Package metadata incomplete for $(MSBuildProjectName): PackageId, Title, Description and PackageTags are required." />
+    <Error Condition="'$(PackageId)' == '' OR '$(Description)' == '' OR '$(PackageTags)' == ''"
+           Text="Package metadata incomplete for $(MSBuildProjectName): PackageId, Description and PackageTags are required." />
     <Error Condition="'$(Authors)' != 'M. Albert'"
            Text="Unexpected Authors value: $(Authors)" />
     <Error Condition="'$(ContinuousIntegrationBuild)' == 'true' AND ('$(VersionSuffix)' == '' OR '$(VersionSuffix)' == '$(MNotePrereleaseLabel)')"

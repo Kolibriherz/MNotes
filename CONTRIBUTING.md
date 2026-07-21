@@ -25,6 +25,9 @@ MSBuild determines project build order from the declared
 ## Changes
 
 - Keep commits atomic: one logical change per commit, build and tests green.
+  Trivial incidental fixes — a typo, a wording clarification, a redundant line
+  removed — may ride along in a commit that already touches the file. They do
+  not deserve a commit of their own.
 - Use short English commit messages with a conventional prefix
   (`feat`, `fix`, `refactor`, `test`, `docs`, `build`, `ci`, `style`, `chore`).
 - Public API changes require a `CHANGELOG.md` entry.
