@@ -1,5 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
 	<PropertyGroup>
-		<IsPackable>false</IsPackable>
+		<IsPackable>true</IsPackable>
+		<PackageId>MNoteProvider.Common.Abstractions</PackageId>
+		<Title>MNoteProvider.Common.Abstractions</Title>
+		<Description>Transport-neutral contracts for the MNoteProvider package family, including DTO interfaces, event contracts, failure types, and error-message resources.</Description>
+		<PackageTags>mnotes;notes;contracts;dto;abstractions;dotnet</PackageTags>
 	</PropertyGroup>
+	
 </Project>

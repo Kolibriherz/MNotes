@@ -1,6 +1,9 @@
 <Project>
   <Import Project="$(MSBuildThisFileDirectory)eng/Version.props" />
   <PropertyGroup>
+    <RepositoryUrl>https://github.com/Kolibriherz/MNotes.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>

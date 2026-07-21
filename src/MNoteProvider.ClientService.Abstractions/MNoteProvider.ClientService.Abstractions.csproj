@@ -1,7 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<IsPackable>false</IsPackable>
+		<IsPackable>true</IsPackable>
+		<PackageId>MNoteProvider.ClientService.Abstractions</PackageId>
+		<Title>MNoteProvider.ClientService.Abstractions</Title>
+		<Description>Client-facing HTTP operation and real-time notification contracts for consuming an MNoteProvider service.</Description>
+		<PackageTags>mnotes;notes;client;contracts;abstractions;dotnet</PackageTags>
 	</PropertyGroup>
 	
     <ItemGroup>

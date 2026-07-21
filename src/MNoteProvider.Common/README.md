@@ -25,5 +25,5 @@ this package in as a dependency.
 
 ## License
 
-MNoteProvider packages are licensed under the MIT License.. Third-party components are listed in
+MNoteProvider packages are licensed under the MIT License. Third-party components are listed in
 `THIRD-PARTY-NOTICES.md`.
