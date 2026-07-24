@@ -82,9 +82,6 @@ try {
                 -replace '[^A-Za-z0-9._-]', '_'
 
         $binLog = Join-Path $buildLogPath "$safeName.binlog"
-        $fileLog = Join-Path `
-            $buildLogPath `
-            "$safeName-detailed.log"
 
         Write-Host "Building $($project.name): $($project.path)"
 
@@ -101,8 +98,7 @@ try {
                 'normal',
                 "-p:VersionSuffix=$VersionSuffix",
                 "-p:InformationalVersion=$InformationalVersion",
-                "-bl:$binLog",
-                "-flp:LogFile=$fileLog;Verbosity=detailed"
+                "-bl:$binLog"
             ) `
             -FailureMessage "Build failed for $($project.name)."
     }
@@ -138,8 +134,6 @@ try {
                 $testResultPath,
                 '--logger',
                 "trx;LogFileName=$safeName.trx",
-                '--diag',
-                $diagnosticLog,
                 '--collect',
                 'XPlat Code Coverage'
             ) `
