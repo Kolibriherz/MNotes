@@ -1,0 +1,239 @@
+
+name: CI 
+
+on:
+
+  push:
+    branches:
+      - main
+
+  pull_request:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+
+    name: Validate, test and pack
+    runs-on: windows-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+
+    env:
+
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_NOLOGO: true
+      NUGET_XMLDOC_MODE: skip
+      NUGET_PACKAGES: ${{ runner.temp }}\nuget-packages
+
+    steps:
+
+      - name: Check out repository
+
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up .NET SDK
+      
+        uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5.0.1
+        with:
+          global-json-file: global.json
+
+      - name: Show toolchain
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          dotnet --version
+          dotnet --info
+
+      - name: Test release policy states
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          & eng/scripts/Test-PackagePolicy.ps1
+
+      - name: Restore locked dependencies
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force artifacts/logs | Out-Null
+
+          & dotnet restore MNotes.sln `
+            --configfile NuGet.Config `
+            --locked-mode `
+            --verbosity detailed 2>&1 |
+            Tee-Object -FilePath artifacts/logs/restore-detailed.log
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "Locked restore failed with exit code $LASTEXITCODE."
+          }
+
+      - name: Calculate deterministic package version
+
+        id: version
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force artifacts/reports | Out-Null
+
+          $json = & eng/scripts/Get-PackageVersion.ps1 `
+            -Commit $env:GITHUB_SHA `
+            -RunNumber $env:GITHUB_RUN_NUMBER
+
+          if ($LASTEXITCODE -ne 0) {
+            throw 'Version calculation failed.'
+          }
+
+          $info = $json | ConvertFrom-Json
+
+          Set-Content `
+            -LiteralPath artifacts/reports/version.json `
+            -Value $json `
+            -Encoding utf8
+
+          Add-Content $env:GITHUB_OUTPUT "package_version=$($info.PackageVersion)"
+          Add-Content $env:GITHUB_OUTPUT "version_suffix=$($info.VersionSuffix)"
+          Add-Content $env:GITHUB_OUTPUT "informational_version=$($info.InformationalVersion)"
+          Add-Content $env:GITHUB_OUTPUT "tag=$($info.Tag)"
+
+      - name: Inspect dependency health
+        id: health
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          
+          $json = & eng/scripts/Get-PackageHealth.ps1 `
+            -Solution MNotes.sln `
+            -ReportsPath artifacts/reports `
+            -RestoreLogPath artifacts/logs/restore-detailed.log
+            
+          if ($LASTEXITCODE -ne 0) {
+            throw 'Dependency health inspection failed unexpectedly.'
+          }
+          
+          $health = $json | ConvertFrom-Json
+          Set-Content `
+            -LiteralPath artifacts/reports/health.json `
+            -Value $json `
+            -Encoding utf8
+
+          Add-Content $env:GITHUB_OUTPUT "health=$($health.Health)"
+          Add-Content $env:GITHUB_OUTPUT "scan_ok=$($health.ScanOk.ToString().ToLowerInvariant())"
+          Add-Content $env:GITHUB_OUTPUT "vulnerabilities=$($health.VulnerabilityCount)"
+          Add-Content $env:GITHUB_OUTPUT "outdated=$($health.OutdatedCount)"
+          Add-Content $env:GITHUB_OUTPUT "deprecated=$($health.DeprecatedCount)"
+
+      - name: Build in required order and run all tests
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          
+          & eng/scripts/Build.ps1 `
+            -Configuration Release `
+            -VersionSuffix '${{ steps.version.outputs.version_suffix }}' `
+            -InformationalVersion '${{ steps.version.outputs.informational_version }}'
+
+      - name: Pack release-train candidate
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          
+          & eng/scripts/Pack.ps1 `
+            -Configuration Release `
+            -PackageVersion '${{ steps.version.outputs.package_version }}' `
+            -VersionSuffix '${{ steps.version.outputs.version_suffix }}' `
+            -InformationalVersion '${{ steps.version.outputs.informational_version }}'
+
+      - name: Test candidate packages
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          
+          & eng/scripts/Test-Packages.ps1 `
+            -PackageDirectory 'artifacts/packages/${{ steps.version.outputs.package_version }}' `
+            -PackageVersion '${{ steps.version.outputs.package_version }}'
+
+
+      - name: Write manifest and SHA-256 checksums
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+
+          $healthJson = Get-Content -Raw -LiteralPath artifacts/reports/health.json
+
+          & eng/scripts/Write-ReleaseManifest.ps1 `
+            -PackageDirectory 'artifacts/packages/${{ steps.version.outputs.package_version }}' `
+            -PackageVersion '${{ steps.version.outputs.package_version }}' `
+            -Commit $env:GITHUB_SHA `
+            -HealthJson $healthJson
+
+      - name: Write job summary
+
+        if: always()
+        shell: pwsh
+        run: |
+          $lines = @(
+            '## MNotes CI',
+            '',
+            '- Commit: `${{ github.sha }}`',
+            '- Package version: `${{ steps.version.outputs.package_version }}`',
+            '- Dependency health: `${{ steps.health.outputs.health }}`',
+            '- Vulnerabilities: `${{ steps.health.outputs.vulnerabilities }}`',
+            '- Outdated: `${{ steps.health.outputs.outdated }}`',
+            '- Deprecated: `${{ steps.health.outputs.deprecated }}`',
+            '',
+            'This workflow never publishes packages.'
+          )
+          Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Value $lines
+
+      - name: Upload candidate, reports and test results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ci-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/packages
+            artifacts/reports
+            artifacts/test-results/*.trx
+            artifacts/test-results/**/coverage.cobertura.xml
+
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload diagnostics on failure
+      
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ci-${{ github.run_id }}-${{ github.run_attempt }}-diagnostics
+          path: |
+            artifacts/logs
+            artifacts/test-results
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Enforce dependency security policy
+        if: always() && steps.health.outputs.health == 'security-blocked'
+        shell: pwsh
+        run: |
+          Write-Error 'Dependency security policy blocks this build. Inspect the uploaded reports.'
+          exit 1
