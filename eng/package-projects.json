@@ -1,0 +1,92 @@
+{
+  "buildProjects": [
+    {
+      "name": "MNoteProvider.Common.Abstractions",
+      "path": "src/MNoteProvider.Common.Abstractions/MNoteProvider.Common.Abstractions.csproj",
+      "kind": "production"
+    },
+    {
+      "name": "MNoteProvider.Common",
+      "path": "src/MNoteProvider.Common/MNoteProvider.Common.csproj",
+      "kind": "production"
+    },
+    {
+      "name": "MNoteProvider.Domain.Abstractions",
+      "path": "src/MNoteProvider.Domain.Abstractions/MNoteProvider.Domain.Abstractions.csproj",
+      "kind": "production"
+    },
+    {
+      "name": "MNoteProvider.Domain",
+      "path": "src/MNoteProvider.Domain/MNoteProvider.Domain.csproj",
+      "kind": "production"
+    },
+    {
+      "name": "MNoteProvider.ClientService.Abstractions",
+      "path": "src/MNoteProvider.ClientService.Abstractions/MNoteProvider.ClientService.Abstractions.csproj",
+      "kind": "production"
+    },
+    {
+      "name": "MNoteProvider.ClientService",
+      "path": "src/MNoteProvider.ClientService/MNoteProvider.ClientService.csproj",
+      "kind": "production"
+    },
+    {
+      "name": "MNoteProvider.DataAccess",
+      "path": "src/MNoteProvider.DataAccess/MNoteProvider.DataAccess.csproj",
+      "kind": "production"
+    },
+    {
+      "name": "MNoteProvider.BusinessCore",
+      "path": "src/MNoteProvider.BusinessCore/MNoteProvider.BusinessCore.csproj",
+      "kind": "production"
+    },
+    {
+      "name": "MNoteProvider",
+      "path": "src/MNoteProvider/MNoteProvider.csproj",
+      "kind": "production"
+    },
+    {
+      "name": "MNoteProvider.Common.Tests",
+      "path": "tests/MNoteProvider.Common.Tests/MNoteProvider.Common.Tests.csproj",
+      "kind": "test"
+    },
+    {
+      "name": "MNoteProvider.ClientService.Tests",
+      "path": "tests/MNoteProvider.ClientService.Tests/MNoteProvider.ClientService.Tests.csproj",
+      "kind": "test"
+    },
+    {
+      "name": "MNoteProvider.DataAccess.Tests",
+      "path": "tests/MNoteProvider.DataAccess.Tests/MNoteProvider.DataAccess.Tests.csproj",
+      "kind": "test"
+    },
+    {
+      "name": "MNoteProvider.BusinessCore.Tests",
+      "path": "tests/MNoteProvider.BusinessCore.Tests/MNoteProvider.BusinessCore.Tests.csproj",
+      "kind": "test"
+    },
+    {
+      "name": "MNoteProvider.Tests",
+      "path": "tests/MNoteProvider.Tests/MNoteProvider.Tests.csproj",
+      "kind": "test"
+    }
+  ],
+  "packageProjects": [
+    {
+      "id": "MNoteProvider.Common.Abstractions",
+      "path": "src/MNoteProvider.Common.Abstractions/MNoteProvider.Common.Abstractions.csproj"
+    },
+    {
+      "id": "MNoteProvider.Common",
+      "path": "src/MNoteProvider.Common/MNoteProvider.Common.csproj"
+    },
+    {
+      "id": "MNoteProvider.ClientService.Abstractions",
+      "path": "src/MNoteProvider.ClientService.Abstractions/MNoteProvider.ClientService.Abstractions.csproj"
+    },
+    {
+      "id": "MNoteProvider.ClientService",
+      "path": "src/MNoteProvider.ClientService/MNoteProvider.ClientService.csproj"
+    }
+  ]
+}
