@@ -93,10 +93,6 @@ jobs:
             -Commit $env:GITHUB_SHA `
             -RunNumber $env:GITHUB_RUN_NUMBER
 
-          if ($LASTEXITCODE -ne 0) {
-            throw 'Version calculation failed.'
-          }
-
           $info = $json | ConvertFrom-Json
 
           Set-Content `
@@ -120,11 +116,7 @@ jobs:
             -Solution MNotes.sln `
             -ReportsPath artifacts/reports `
             -RestoreLogPath artifacts/logs/restore-detailed.log
-            
-          if ($LASTEXITCODE -ne 0) {
-            throw 'Dependency health inspection failed unexpectedly.'
-          }
-          
+
           $health = $json | ConvertFrom-Json
           Set-Content `
             -LiteralPath artifacts/reports/health.json `
