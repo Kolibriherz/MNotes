@@ -1,0 +1,639 @@
+
+
+#   candidate ──┬─> block_security     
+#               ├─> publish_auto       
+#               ├─> publish_reviewed   
+#               └─> mark_release       
+#                       └─> summary    
+
+
+name: Package release
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish an eligible candidate when all gates allow it
+        required: true
+        default: false
+        type: boolean
+
+permissions: {}
+
+concurrency:
+  group: mnoteprovider-package-release
+
+jobs:
+
+  candidate:
+    name: Build and inspect candidate
+    runs-on: windows-latest
+    timeout-minutes: 60
+
+    permissions:
+      contents: read
+
+    outputs:
+      package_changed: ${{ steps.scope.outputs.package_changed }}
+      health: ${{ steps.result.outputs.health }}
+      package_version: ${{ steps.version.outputs.package_version }}
+      version_suffix: ${{ steps.version.outputs.version_suffix }}
+      informational_version: ${{ steps.version.outputs.informational_version }}
+      tag: ${{ steps.version.outputs.tag }}
+      commit: ${{ steps.scope.outputs.commit }}
+
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_NOLOGO: true
+      NUGET_XMLDOC_MODE: skip
+
+    steps:
+      - name: Check out full repository history
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5.0.1
+        with:
+          global-json-file: global.json
+
+      - name: Test release policy states
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          & eng/scripts/Test-PackagePolicy.ps1
+
+
+      - name: Determine release scope
+        id: scope
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force artifacts/reports | Out-Null
+
+          $json = & eng/scripts/Get-ReleaseScope.ps1 -Commit $env:GITHUB_SHA
+
+          $scope = $json | ConvertFrom-Json
+          Set-Content `
+            -LiteralPath artifacts/reports/release-scope.json `
+            -Value $json `
+            -Encoding utf8
+
+          Add-Content $env:GITHUB_OUTPUT `
+            "package_changed=$($scope.PackageChanged.ToString().ToLowerInvariant())"
+          Add-Content $env:GITHUB_OUTPUT "commit=$($scope.Commit)"
+
+      - name: Restore locked dependencies
+        if: steps.scope.outputs.package_changed == 'true'
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force artifacts/logs | Out-Null
+
+          & dotnet restore MNotes.sln `
+            --configfile NuGet.Config `
+            --locked-mode `
+            --verbosity detailed 2>&1 |
+            Tee-Object -FilePath artifacts/logs/restore-detailed.log
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "Locked restore failed with exit code $LASTEXITCODE."
+          }
+
+      - name: Calculate final candidate version
+        if: steps.scope.outputs.package_changed == 'true'
+        id: version
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+
+          $json = & eng/scripts/Get-PackageVersion.ps1 `
+            -Commit $env:GITHUB_SHA `
+            -RunNumber $env:GITHUB_RUN_NUMBER
+
+          $info = $json | ConvertFrom-Json
+          Set-Content `
+            -LiteralPath artifacts/reports/version.json `
+            -Value $json `
+            -Encoding utf8
+
+          Add-Content $env:GITHUB_OUTPUT "package_version=$($info.PackageVersion)"
+          Add-Content $env:GITHUB_OUTPUT "version_suffix=$($info.VersionSuffix)"
+          Add-Content $env:GITHUB_OUTPUT "informational_version=$($info.InformationalVersion)"
+          Add-Content $env:GITHUB_OUTPUT "tag=$($info.Tag)"
+
+      - name: Inspect dependency health
+        if: steps.scope.outputs.package_changed == 'true'
+        id: health
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+
+          $json = & eng/scripts/Get-PackageHealth.ps1 `
+            -Solution MNotes.sln `
+            -ReportsPath artifacts/reports `
+            -RestoreLogPath artifacts/logs/restore-detailed.log
+
+          $health = $json | ConvertFrom-Json
+
+          Set-Content `
+            -LiteralPath artifacts/reports/health.json `
+            -Value $json `
+            -Encoding utf8
+
+          Add-Content $env:GITHUB_OUTPUT "health=$($health.Health)"
+          Add-Content $env:GITHUB_OUTPUT "vulnerabilities=$($health.VulnerabilityCount)"
+          Add-Content $env:GITHUB_OUTPUT "outdated=$($health.OutdatedCount)"
+          Add-Content $env:GITHUB_OUTPUT "deprecated=$($health.DeprecatedCount)"
+
+      - name: Build in required order and run all tests
+        if: steps.scope.outputs.package_changed == 'true'
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+
+          & eng/scripts/Build.ps1 `
+            -Configuration Release `
+            -VersionSuffix '${{ steps.version.outputs.version_suffix }}' `
+            -InformationalVersion '${{ steps.version.outputs.informational_version }}'
+
+      - name: Pack release-train candidate
+        if: steps.scope.outputs.package_changed == 'true'
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+
+          & eng/scripts/Pack.ps1 `
+            -Configuration Release `
+            -PackageVersion '${{ steps.version.outputs.package_version }}' `
+            -VersionSuffix '${{ steps.version.outputs.version_suffix }}' `
+            -InformationalVersion '${{ steps.version.outputs.informational_version }}'
+
+      - name: Test candidate packages
+        if: steps.scope.outputs.package_changed == 'true'
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+
+          & eng/scripts/Test-Packages.ps1 `
+            -PackageDirectory 'artifacts/packages/${{ steps.version.outputs.package_version }}' `
+            -PackageVersion '${{ steps.version.outputs.package_version }}'
+
+      - name: Write manifest and SHA-256 checksums
+        if: steps.scope.outputs.package_changed == 'true'
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+
+          $healthJson = Get-Content -Raw -LiteralPath artifacts/reports/health.json
+          & eng/scripts/Write-ReleaseManifest.ps1 `
+            -PackageDirectory 'artifacts/packages/${{ steps.version.outputs.package_version }}' `
+            -PackageVersion '${{ steps.version.outputs.package_version }}' `
+            -Commit $env:GITHUB_SHA `
+            -HealthJson $healthJson
+
+      - name: Upload candidate and diagnostic evidence
+        if: always() && steps.scope.outputs.package_changed == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: nuget-candidate
+          path: |
+            artifacts
+            !artifacts/package-smoke
+
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Set final candidate state
+        if: always()
+        id: result
+        shell: pwsh
+        run: |
+          $changed = '${{ steps.scope.outputs.package_changed }}'
+          $currentJobStatus = '${{ job.status }}'
+          $dependencyHealth = '${{ steps.health.outputs.health }}'
+
+
+          if ($changed -ne 'true') {
+            $finalHealth = 'not-required'
+          }
+          elseif ($currentJobStatus -ne 'success') {
+            $finalHealth = 'validation-failed'
+          }
+          elseif ([string]::IsNullOrWhiteSpace($dependencyHealth)) {
+            $finalHealth = 'security-blocked'
+          }
+          else {
+            $finalHealth = $dependencyHealth
+          }
+
+          Add-Content $env:GITHUB_OUTPUT "health=$finalHealth"
+
+      - name: Write candidate summary
+        if: always()
+        shell: pwsh
+        run: |
+          $lines = @(
+            '## NuGet candidate',
+            '',
+            '- Commit: `${{ steps.scope.outputs.commit }}`',
+            '- Package change: `${{ steps.scope.outputs.package_changed }}`',
+            '- Package version: `${{ steps.version.outputs.package_version }}`',
+            '- Health: `${{ steps.result.outputs.health }}`',
+            '- Publishing variable: `${{ vars.NUGET_PUBLISHING_ENABLED }}`',
+            '- Manual publish input: `${{ inputs.publish }}`'
+          )
+          Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Value $lines
+
+
+  block_security:
+    name: Block unsafe publication
+    needs: candidate
+    if: >-
+      ${{
+        needs.candidate.result == 'success' &&
+        needs.candidate.outputs.health == 'security-blocked'
+      }}
+    runs-on: windows-latest
+    timeout-minutes: 5
+    permissions: {}
+
+    steps:
+      - name: Report security block
+        shell: pwsh
+        run: |
+          Write-Error 'NuGet publication is blocked by dependency security policy. Inspect the candidate reports.'
+          exit 1
+
+  publish_auto:
+    name: Publish clean candidate
+    needs: candidate
+
+
+    if: >-
+      ${{
+        needs.candidate.result == 'success' &&
+        needs.candidate.outputs.package_changed == 'true' &&
+        needs.candidate.outputs.health == 'auto-ready' &&
+        vars.NUGET_PUBLISHING_ENABLED == 'true' &&
+        (
+          github.event_name == 'push' ||
+          inputs.publish == true
+        )
+      }}
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    environment:
+      name: nuget-production-auto
+
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_NOLOGO: true
+      NUGET_XMLDOC_MODE: skip
+
+    steps:
+      - name: Check out exact candidate commit
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ needs.candidate.outputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5.0.1
+        with:
+          global-json-file: global.json
+
+      - name: Download exact candidate artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: nuget-candidate
+          path: artifacts
+
+      - name: Verify candidate identity and checksums
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+
+          $packagePath = 'artifacts/packages/${{ needs.candidate.outputs.package_version }}'
+          $manifest = Get-Content -Raw `
+            -LiteralPath "$packagePath/release-manifest.json" |
+            ConvertFrom-Json
+
+          if ($manifest.PackageVersion -ne '${{ needs.candidate.outputs.package_version }}' -or
+              $manifest.Commit -ne '${{ needs.candidate.outputs.commit }}') {
+            throw 'Candidate manifest does not match workflow outputs.'
+          }
+
+          foreach ($line in Get-Content -LiteralPath "$packagePath/SHA256SUMS") {
+            if ($line -notmatch '^([0-9a-fA-F]{64})  (.+)$') {
+              throw "Invalid checksum line: $line"
+            }
+            $actual = (Get-FileHash `
+              -LiteralPath (Join-Path $packagePath $Matches[2]) `
+              -Algorithm SHA256).Hash
+            if ($actual -ne $Matches[1]) {
+              throw "Checksum mismatch: $($Matches[2])"
+            }
+          }
+
+      - name: Recheck dependency security before OIDC login
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force artifacts/recheck-auto | Out-Null
+
+          & dotnet restore MNotes.sln `
+            --configfile NuGet.Config `
+            --locked-mode `
+            --verbosity detailed 2>&1 |
+            Tee-Object -FilePath artifacts/recheck-auto/restore.log
+
+          if ($LASTEXITCODE -ne 0) {
+            throw 'Security recheck restore failed.'
+          }
+
+          $json = & eng/scripts/Get-PackageHealth.ps1 `
+            -Solution MNotes.sln `
+            -ReportsPath artifacts/recheck-auto/reports `
+            -RestoreLogPath artifacts/recheck-auto/restore.log
+
+          $health = $json | ConvertFrom-Json
+          if ($health.Health -ne 'auto-ready') {
+            throw "Automatic publication is no longer clean: $($health.Health)"
+          }
+
+      - name: NuGet login with OIDC
+        id: nuget_login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Publish exact packages in dependency order
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ steps.nuget_login.outputs.NUGET_API_KEY }}
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          & eng/scripts/Publish-Packages.ps1 `
+            -PackageDirectory 'artifacts/packages/${{ needs.candidate.outputs.package_version }}' `
+            -PackageVersion '${{ needs.candidate.outputs.package_version }}'
+
+
+  publish_reviewed:
+    name: Publish reviewed candidate
+    needs: candidate
+    if: >-
+      ${{
+        needs.candidate.result == 'success' &&
+        needs.candidate.outputs.package_changed == 'true' &&
+        needs.candidate.outputs.health == 'review-required' &&
+        vars.NUGET_PUBLISHING_ENABLED == 'true' &&
+        (
+          github.event_name == 'push' ||
+          inputs.publish == true
+        )
+      }}
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    environment:
+      name: nuget-production-review
+
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_NOLOGO: true
+      NUGET_XMLDOC_MODE: skip
+
+    steps:
+      - name: Check out exact candidate commit
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ needs.candidate.outputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5.0.1
+        with:
+          global-json-file: global.json
+
+      - name: Download exact candidate artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: nuget-candidate
+          path: artifacts
+
+      - name: Verify candidate identity and checksums
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+
+          $packagePath = 'artifacts/packages/${{ needs.candidate.outputs.package_version }}'
+          $manifest = Get-Content -Raw `
+            -LiteralPath "$packagePath/release-manifest.json" |
+            ConvertFrom-Json
+
+          if ($manifest.PackageVersion -ne '${{ needs.candidate.outputs.package_version }}' -or
+              $manifest.Commit -ne '${{ needs.candidate.outputs.commit }}') {
+            throw 'Candidate manifest does not match workflow outputs.'
+          }
+
+          foreach ($line in Get-Content -LiteralPath "$packagePath/SHA256SUMS") {
+            if ($line -notmatch '^([0-9a-fA-F]{64})  (.+)$') {
+              throw "Invalid checksum line: $line"
+            }
+            $actual = (Get-FileHash `
+              -LiteralPath (Join-Path $packagePath $Matches[2]) `
+              -Algorithm SHA256).Hash
+            if ($actual -ne $Matches[1]) {
+              throw "Checksum mismatch: $($Matches[2])"
+            }
+          }
+
+      - name: Recheck dependency security before OIDC login
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force artifacts/recheck-reviewed | Out-Null
+
+          & dotnet restore MNotes.sln `
+            --configfile NuGet.Config `
+            --locked-mode `
+            --verbosity detailed 2>&1 |
+            Tee-Object -FilePath artifacts/recheck-reviewed/restore.log
+
+          if ($LASTEXITCODE -ne 0) {
+            throw 'Security recheck restore failed.'
+          }
+
+          $json = & eng/scripts/Get-PackageHealth.ps1 `
+            -Solution MNotes.sln `
+            -ReportsPath artifacts/recheck-reviewed/reports `
+            -RestoreLogPath artifacts/recheck-reviewed/restore.log
+
+          $health = $json | ConvertFrom-Json
+          if ($health.Health -eq 'security-blocked') {
+            throw 'Reviewed publication is now security-blocked.'
+          }
+
+      - name: NuGet login with OIDC
+        id: nuget_login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Publish exact packages in dependency order
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ steps.nuget_login.outputs.NUGET_API_KEY }}
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          & eng/scripts/Publish-Packages.ps1 `
+            -PackageDirectory 'artifacts/packages/${{ needs.candidate.outputs.package_version }}' `
+            -PackageVersion '${{ needs.candidate.outputs.package_version }}'
+
+  mark_release:
+    name: Tag successful package release
+    needs:
+      - candidate
+      - publish_auto
+      - publish_reviewed
+
+    if: >-
+      ${{
+        always() &&
+        needs.candidate.result == 'success' &&
+        (
+          needs.publish_auto.result == 'success' ||
+          needs.publish_reviewed.result == 'success'
+        )
+      }}
+    runs-on: windows-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out released commit
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ needs.candidate.outputs.commit }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Create idempotent annotated release tag
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+
+          $tag = '${{ needs.candidate.outputs.tag }}'
+          $commit = '${{ needs.candidate.outputs.commit }}'
+
+          git fetch --force --tags origin
+          if ($LASTEXITCODE -ne 0) { throw 'Tag fetch failed.' }
+
+          $existingOutput = & git rev-list -n 1 $tag 2>$null
+          $existingCommit = ([string] $existingOutput).Trim()
+
+          if (-not [string]::IsNullOrWhiteSpace($existingCommit)) {
+            if ($existingCommit -ne $commit) {
+              throw "Tag $tag points to a different commit."
+            }
+            Write-Host "Tag already exists on the expected commit: $tag"
+          }
+          else {
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git tag -a $tag $commit -m "MNoteProvider ${{ needs.candidate.outputs.package_version }}"
+            if ($LASTEXITCODE -ne 0) { throw 'Tag creation failed.' }
+            git push origin $tag
+            if ($LASTEXITCODE -ne 0) { throw 'Tag push failed.' }
+          }
+
+      - name: Create idempotent prerelease entry
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          $tag = '${{ needs.candidate.outputs.tag }}'
+
+          & gh release view $tag *> $null
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "GitHub release already exists: $tag"
+          }
+          else {
+
+            gh release create $tag `
+              --verify-tag `
+              --prerelease `
+              --title "MNoteProvider ${{ needs.candidate.outputs.package_version }}" `
+              --notes "Four-package alpha release train published to NuGet.org. See CHANGELOG.md."
+
+            if ($LASTEXITCODE -ne 0) {
+              throw 'GitHub release creation failed.'
+            }
+          }
+
+  summary:
+    name: Release summary
+    needs:
+      - candidate
+      - block_security
+      - publish_auto
+      - publish_reviewed
+      - mark_release
+
+    if: always()
+    runs-on: windows-latest
+    timeout-minutes: 5
+    permissions: {}
+
+    steps:
+      - name: Write final summary
+        shell: pwsh
+        run: |
+          $lines = @(
+            '## Package release result',
+            '',
+            '- Candidate job: `${{ needs.candidate.result }}`',
+            '- Candidate health: `${{ needs.candidate.outputs.health }}`',
+            '- Package version: `${{ needs.candidate.outputs.package_version }}`',
+            '- Security blocker: `${{ needs.block_security.result }}`',
+            '- Automatic publish: `${{ needs.publish_auto.result }}`',
+            '- Reviewed publish: `${{ needs.publish_reviewed.result }}`',
+            '- Release tag: `${{ needs.mark_release.result }}`'
+          )
+          Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Value $lines
