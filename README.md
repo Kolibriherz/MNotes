@@ -20,6 +20,8 @@ append-only event stream, and real-time change notifications over SignalR.
   
 ## NuGet packages
 
+[docs/releasing.md](docs/releasing.md)
+
 The client library is published on NuGet.org as a release train — all four
 packages share one version:
 
