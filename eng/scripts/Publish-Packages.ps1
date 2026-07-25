@@ -640,13 +640,10 @@ foreach ($packageId in $packageIds) {
     Write-Host "  Package: $packagePath"
     Write-Host "  Symbols: $symbolPath"
 
-
     & dotnet nuget push $packagePath `
-        --api-key $env:NUGET_API_KEY `
-        --symbol-api-key $env:NUGET_API_KEY `
-        --source $nugetSource `
-        --skip-duplicate `
-        --timeout 600
+    --source $nugetSource `
+    --skip-duplicate `
+    --timeout 600
 
 
     if ($LASTEXITCODE -ne 0) {
