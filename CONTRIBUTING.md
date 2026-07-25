@@ -34,6 +34,10 @@ MSBuild determines project build order from the declared
 - New dependencies require a license check. Update
 `THIRD-PARTY-NOTICES.md` and, for public package runtime dependencies,
 `docs/nuget/THIRD-PARTY-NOTICES.md`.
+- After a dependency change, commit the updated `packages.lock.json` files
+  together with the change. For a Dependabot PR, check it out locally, run
+  `dotnet restore`, build and test, then commit the resulting lock-file
+  updates into the PR before merging.
 
 ## Not accepted
 

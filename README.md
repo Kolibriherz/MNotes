@@ -17,6 +17,24 @@ append-only event stream, and real-time change notifications over SignalR.
 > 
 > - HTTP endpoints and SignalR hub are directly accessible without authentication
 > - The current version is intended for **local development only** or use in a **fully trusted environment**
+  
+## NuGet packages
+
+The client library is published on NuGet.org as a release train — all four
+packages share one version:
+
+| Package | Purpose |
+|---|---|
+| [MNoteProvider.Common.Abstractions](https://www.nuget.org/packages/MNoteProvider.Common.Abstractions) | Transport-neutral contracts: DTOs, events, failures |
+| [MNoteProvider.Common](https://www.nuget.org/packages/MNoteProvider.Common) | Shared models and route constants |
+| [MNoteProvider.ClientService.Abstractions](https://www.nuget.org/packages/MNoteProvider.ClientService.Abstractions) | Client operation and notification contracts |
+| [MNoteProvider.ClientService](https://www.nuget.org/packages/MNoteProvider.ClientService) | Typed HTTP + SignalR client with DI registration |
+
+> **Alpha.** Public APIs may change between pre-releases — see [VERSIONING.md](VERSIONING.md).
+
+```​bash
+dotnet add package MNoteProvider.ClientService
+```
 
 ## Architecture
 
