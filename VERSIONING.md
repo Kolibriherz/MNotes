@@ -54,9 +54,12 @@ repository metadata, including `RepositoryCommit`.
 
 ## Immutability
 
-A published version is never reused.
+A published version is never republished with different content.
 
-A workflow run may be re-run only while no package with that version
-has been published.
+A workflow run may be safely re-run to finish a partial publish: packages
+already uploaded are skipped (`--skip-duplicate`) and only the missing ones
+are pushed. This re-uploads the identical built packages — it does not reuse
+the version for new content.
 
-A defective release is unlisted and replaced with a new version.
+A defective release is never overwritten. It is unlisted and replaced with
+a new version.
