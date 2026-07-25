@@ -564,7 +564,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Tag fetch failed.' }
 
           $existingOutput = & git rev-list -n 1 $tag 2>$null
-          $existingCommit = ([string] $existingOutput).Trim()
+          $existingCommit = "$existingOutput".Trim()
 
           if (-not [string]::IsNullOrWhiteSpace($existingCommit)) {
             if ($existingCommit -ne $commit) {
