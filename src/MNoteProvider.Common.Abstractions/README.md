@@ -12,7 +12,7 @@ messages.
 ## Install
 
 ```bash
-dotnet package add MNoteProvider.Common.Abstractions --prerelease
+dotnet add package MNoteProvider.Common.Abstractions --prerelease
 ```
 
 ## Contents

@@ -11,7 +11,7 @@ MNoteProvider server and client.
 ## Install
 
 ```bash
-dotnet package add MNoteProvider.Common --prerelease
+dotnet add package MNoteProvider.Common --prerelease
 ```
 
 ## Contents

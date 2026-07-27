@@ -35,7 +35,7 @@ packages share one version:
 > **Alpha.** Public APIs may change between pre-releases — see [VERSIONING.md](VERSIONING.md).
 
 ```​bash
-dotnet add package MNoteProvider.ClientService
+dotnet add package MNoteProvider.ClientService --prerelease
 ```
 
 ## Architecture
@@ -90,7 +90,7 @@ Design decisions worth noting:
 |---|---|---|
 | [Dapper](https://github.com/DapperLib/Dapper) | DataAccess | Micro-ORM; SQL stays explicit and under full control |
 | [Npgsql](https://www.npgsql.org/) | DataAccess | PostgreSQL ADO.NET driver |
-| [OneOf](https://github.com/mcintyre321/OneOf) | Host, BusinessCore, DataAccess, ClientService | Explicit success/failure results |
+| [OneOf](https://github.com/mcintyre321/OneOf) | Host, BusinessCore, DataAccess, ClientService.Abstractions | Explicit success/failure results |
 | ASP.NET Core SignalR (+ client) | Host, ClientService | Real-time note change notifications |
 | `Microsoft.Extensions.*` | DataAccess, ClientService | Configuration, DI, and HTTP client factory abstractions |
 | NUnit, coverlet | tests | Test framework, assertions, and coverage |

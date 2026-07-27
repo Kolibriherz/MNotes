@@ -19,7 +19,7 @@ dependency-injection registration.
 ## Install
 
 ```bash
-dotnet package add MNoteProvider.ClientService --prerelease
+dotnet add package MNoteProvider.ClientService --prerelease
 ```
 
 ## Usage

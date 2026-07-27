@@ -11,7 +11,7 @@ Client-facing contracts for the MNoteProvider API client:
 ## Install
 
 ```bash
-dotnet package add MNoteProvider.ClientService.Abstractions --prerelease
+dotnet add package MNoteProvider.ClientService.Abstractions --prerelease
 ```
 
 ## Contents
