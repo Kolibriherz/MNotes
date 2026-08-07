@@ -11,5 +11,4 @@ public interface IBaseEvent
     Guid OwnerId { get; set; }
     /// <summary>The date the event was published.</summary>
     DateTime PublishDate { get; set; }
-
 }

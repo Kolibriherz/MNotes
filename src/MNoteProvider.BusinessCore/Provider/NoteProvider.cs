@@ -136,7 +136,7 @@ public class NoteProvider : INoteProvider
             if (!saved)
                 return new MNoteProcessFail(MNotesFailType.PROBLEM, ErrorMessages.DatabaseFail("save", "note"));
 
-            await _eventPublisher.PublishCreatedAsync(newNote.ToDto(), ct).ConfigureAwait(false);
+            await _eventPublisher.PublishCreatedAsync(new CreateEvent(newNote.ToDto()), ct).ConfigureAwait(false);
             return newNote.Id;
         }
         catch (OperationCanceledException) { throw; }
@@ -203,7 +203,7 @@ public class NoteProvider : INoteProvider
             if (!saved)
                 return new MNoteProcessFail(MNotesFailType.PROBLEM, ErrorMessages.DatabaseFail("delete", "note"));
 
-            await _eventPublisher.PublishDeletedAsync(id, ct).ConfigureAwait(false);
+            await _eventPublisher.PublishDeletedAsync(new DeleteEvent(id), ct).ConfigureAwait(false);
             return true;
         }
         catch (OperationCanceledException) { throw; }

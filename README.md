@@ -76,7 +76,7 @@ Design decisions worth noting:
   Business logic has no transport dependency and is testable in isolation.
 - **Errors as values:** Operations return `OneOf<TResult, MNoteProcessFail>` instead of
   throwing for expected failures, so every caller must handle both outcomes explicitly.
-- **Append-only event stream:** Note updates are recorded as immutable events with a type
+- **Append-only event stream:** Note create, update, and delete operations are recorded as immutable events with a type
   discriminator, providing per-note history; deleting a note soft-deactivates its events
   instead of destroying the audit trail.
 - **Server and client share route constants** (`MNotesRoutes`), reducing duplicated
@@ -134,7 +134,6 @@ Unit tests run without a live database; coverage is still growing.
 - Broader test coverage (business layer, API integration tests)
 - Authentication and authorization (API + SignalR protection)
 - Persist note updates and their history events atomically in a shared database transaction
-- Store create and delete events in the event stream (currently updates only)
 - Add global exception handling for consistent API error responses
 
 ## License

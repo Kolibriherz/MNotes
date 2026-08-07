@@ -43,6 +43,26 @@ $$;
 COMMENT ON FUNCTION deactivate_events_for_deleted_note() IS
     'AFTER DELETE trigger function on "note": soft-deactivates the note''s events.';
 
+    
+-- A delete event is born inactive.
+--
+-- The AFTER DELETE trigger on "note" only deactivates events that already
+-- existed at deletion time. The DeleteEvent itself is written afterwards and
+-- would otherwise stay active for a note that no longer exists. This BEFORE
+-- INSERT trigger flips it to inactive on the way in.
+CREATE OR REPLACE FUNCTION deactivate_delete_event() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+begin
+    if new.payloadtype = 'DeleteEvent' then
+        new.active := false;
+    end if;
+    return new;
+end;
+$$;
+
+COMMENT ON FUNCTION deactivate_delete_event() IS
+    'BEFORE INSERT trigger function on "eventstream": a delete event is stored inactive.';
 
 -- =============================================================================
 -- Tables
@@ -169,7 +189,7 @@ CREATE TABLE IF NOT EXISTS eventstream (
 
 COMMENT ON TABLE  eventstream             IS 'Append-only event log. Events are never physically deleted.';
 COMMENT ON COLUMN eventstream.id          IS 'Normally assigned by the application; the default is a safety net for manual inserts.';
-COMMENT ON COLUMN eventstream.active      IS 'Set to false by trigger when the owning note is deleted.';
+COMMENT ON COLUMN eventstream.active      IS 'Inactive events are historical and filtered out on read. Set to false when the owning note is deleted (trigger on "note") and for delete events on insert (trigger on "eventstream").';
 COMMENT ON COLUMN eventstream.ownerid     IS 'Id of the owning entity. Deliberately not a foreign key: events outlive their owner.';
 COMMENT ON COLUMN eventstream.payloadtype IS 'Type discriminator for "payload". Must be filtered on when reading.';
 COMMENT ON COLUMN eventstream.doeom       IS 'Date of entry or modification. Maintained by the application layer, not by the database.';
@@ -261,6 +281,11 @@ CREATE OR REPLACE TRIGGER trg_deactivate_events_after_note_delete
     FOR EACH ROW
     EXECUTE FUNCTION deactivate_events_for_deleted_note();
 
+    
+CREATE OR REPLACE TRIGGER trg_deactivate_delete_event
+    BEFORE INSERT ON eventstream
+    FOR EACH ROW
+    EXECUTE FUNCTION deactivate_delete_event();
 
 -- =============================================================================
 -- Seed data
